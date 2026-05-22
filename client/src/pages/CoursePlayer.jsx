@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
-import { ChevronLeft, CheckCircle2, Circle, Loader2, Play, FileText, Upload, X } from '../lib/icons';
-import { courseAPI, enrollmentAPI } from '../services/api';
+import { ChevronLeft, CheckCircle2, Circle, Loader2, Play, FileText, MessageSquare } from '../lib/icons';
+import { courseAPI, enrollmentAPI, paymentAPI } from '../services/api';
 import { useAuthStore } from '../store/authStore';
 import { getMediaUrl, isDirectVideoUrl } from '../utils/media';
 
@@ -21,6 +21,37 @@ export default function CoursePlayer() {
   const [showPdfSection, setShowPdfSection] = useState(false);
   const [courseResources, setCourseResources] = useState([]);
   const [downloadingResource, setDownloadingResource] = useState(null);
+  const [showFeedbackSection, setShowFeedbackSection] = useState(false);
+  const [feedbacks, setFeedbacks] = useState([]);
+  const [rating, setRating] = useState(5);
+  const [comment, setComment] = useState('');
+  const [submittingFeedback, setSubmittingFeedback] = useState(false);
+  const [feedbackError, setFeedbackError] = useState('');
+  const [feedbackEnabled, setFeedbackEnabled] = useState(true);
+  const [canViewReviews, setCanViewReviews] = useState(false);
+
+  const canAccessReviews = (payments, enrollmentRecord) => {
+    const purchased = (payments || []).some((p) => {
+      const cid = p.course?._id || p.course;
+      return String(cid) === String(id) && p.status === 'completed';
+    });
+    const completed = (enrollmentRecord?.progressPercentage ?? 0) >= 100;
+    return purchased || completed;
+  };
+
+  const loadFeedbacks = async (allowView) => {
+    if (!allowView) {
+      setFeedbacks([]);
+      return;
+    }
+    try {
+      const res = await courseAPI.getFeedbacks(id);
+      setFeedbacks(res.data.feedbacks || []);
+      setFeedbackEnabled(res.data.feedbackEnabled !== false);
+    } catch {
+      setFeedbacks([]);
+    }
+  };
 
   useEffect(() => {
     if (!user) {
@@ -31,9 +62,10 @@ export default function CoursePlayer() {
     const load = async () => {
       setLoading(true);
       try {
-        const [courseRes, enrollRes] = await Promise.all([
+        const [courseRes, enrollRes, payRes] = await Promise.all([
           courseAPI.getById(id),
           enrollmentAPI.my(),
+          paymentAPI.my().catch(() => ({ data: { payments: [] } })),
         ]);
         const c = courseRes.data.course;
         setCourse(c);
@@ -43,6 +75,9 @@ export default function CoursePlayer() {
           return String(cid) === String(id);
         });
         setEnrollment(match || null);
+        const reviewAccess = canAccessReviews(payRes.data.payments || [], match);
+        setCanViewReviews(reviewAccess);
+        if (reviewAccess) await loadFeedbacks(true);
       } catch {
         setCourse(null);
         setEnrollment(null);
@@ -287,6 +322,108 @@ export default function CoursePlayer() {
               </div>
             )}
           </div>
+
+          {canViewReviews && (
+          <div className="glass-card p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold flex items-center gap-2">
+                <MessageSquare className="w-5 h-5 text-indigo-400" />
+                Course Feedback
+              </h3>
+              <button
+                type="button"
+                onClick={() => setShowFeedbackSection(!showFeedbackSection)}
+                className="text-sm text-indigo-400 hover:text-indigo-300"
+              >
+                {showFeedbackSection ? 'Hide' : 'Show'}
+              </button>
+            </div>
+
+            {showFeedbackSection && (
+              <>
+                {!feedbackEnabled ? (
+                  <p className="text-sm text-slate-400">Feedback is disabled for this course by your instructor.</p>
+                ) : (
+                <form
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    if (!rating) return;
+                    setSubmittingFeedback(true);
+                    setFeedbackError('');
+                    try {
+                      await courseAPI.submitFeedback(id, { rating, comment });
+                      setRating(5);
+                      setComment('');
+                      const courseRes = await courseAPI.getById(id);
+                      setCourse(courseRes.data.course);
+                      await loadFeedbacks(true);
+                      toast.success('Thank you for your feedback!');
+                    } catch (err) {
+                      setFeedbackError(
+                        err.response?.data?.message || 'Unable to submit feedback. Please try again.'
+                      );
+                    } finally {
+                      setSubmittingFeedback(false);
+                    }
+                  }}
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <label className="text-sm text-slate-300">Rating</label>
+                    <select
+                      value={rating}
+                      onChange={(e) => setRating(Number(e.target.value))}
+                      className="bg-slate-900 text-slate-200 px-2 py-1 rounded border border-slate-700"
+                    >
+                      <option value={5}>5</option>
+                      <option value={4}>4</option>
+                      <option value={3}>3</option>
+                      <option value={2}>2</option>
+                      <option value={1}>1</option>
+                    </select>
+                  </div>
+                  <textarea
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    placeholder="Share your experience with this course (optional)"
+                    className="w-full bg-slate-900 text-slate-200 p-3 rounded-lg border border-slate-700 mb-3"
+                    rows={4}
+                  />
+                  {feedbackError && <p className="text-sm text-rose-400 mb-3">{feedbackError}</p>}
+                  <button
+                    type="submit"
+                    disabled={submittingFeedback}
+                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-white text-sm font-medium disabled:opacity-60"
+                  >
+                    {submittingFeedback ? 'Submitting...' : 'Submit Feedback'}
+                  </button>
+                </form>
+                )}
+
+                <div className="mt-6 border-t border-slate-700/40 pt-4">
+                  <h4 className="text-sm font-medium text-slate-300 mb-3">Recent reviews</h4>
+                  {feedbacks.length === 0 ? (
+                    <p className="text-slate-500 text-sm">No feedback yet. Be the first to leave a review.</p>
+                  ) : (
+                    feedbacks.map((f) => (
+                      <div key={f._id} className="border-t border-slate-700/40 py-3 first:border-t-0 first:pt-0">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-white">{f.name || 'Student'}</p>
+                            <p className="text-xs text-slate-500">{new Date(f.createdAt).toLocaleString()}</p>
+                          </div>
+                          <div className="text-amber-400 font-semibold text-sm">{f.rating}★</div>
+                        </div>
+                        {f.comment && (
+                          <p className="mt-2 text-slate-300 text-sm whitespace-pre-wrap">{f.comment}</p>
+                        )}
+                      </div>
+                    ))
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+          )}
 
           <div className="flex gap-3">
             {activeIndex > 0 && (

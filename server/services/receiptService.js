@@ -9,7 +9,7 @@ export function generateReceiptPDF(payment) {
     doc.on('end', () => resolve(Buffer.concat(chunks)));
     doc.on('error', reject);
 
-    doc.fontSize(22).fillColor('#6366f1').text('LearnHub AI', { align: 'center' });
+    doc.fontSize(22).fillColor('#6366f1').text('GyaanMate.edu', { align: 'center' });
     doc.moveDown(0.5);
     doc.fontSize(14).fillColor('#333').text('Payment Receipt', { align: 'center' });
     doc.moveDown(1.5);
@@ -32,7 +32,7 @@ export function generateReceiptPDF(payment) {
     });
 
     doc.moveDown(2);
-    doc.fontSize(9).fillColor('#888').text('Thank you for learning with LearnHub AI!', { align: 'center' });
+    doc.fontSize(9).fillColor('#888').text('Thank you for learning with GyaanMate.edu!', { align: 'center' });
 
     doc.end();
   });

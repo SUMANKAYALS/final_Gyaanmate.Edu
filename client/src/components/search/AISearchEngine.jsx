@@ -324,7 +324,7 @@ export function AISearchMessage({ message, provider, compact = false }) {
           <p className="text-sm text-slate-200 leading-relaxed">{message}</p>
           {provider && (
             <p className="text-[10px] text-slate-500 mt-1.5 uppercase tracking-wide">
-              Powered by {provider === 'gemini' ? 'Google Gemini' : 'LearnHub AI'}
+              Powered by {provider === 'gemini' ? 'Google Gemini' : 'GyaanMate.edu'}
             </p>
           )}
         </div>

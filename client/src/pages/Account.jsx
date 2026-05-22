@@ -95,7 +95,7 @@ export default function Account() {
       <motion.div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
         <motion.div>
           <h1 className="text-3xl font-bold gradient-text">My Profile</h1>
-          <p className="text-slate-400 mt-1">Manage your LearnHub AI account</p>
+          <p className="text-slate-400 mt-1">Manage your GyaanMate.edu account</p>
         </motion.div>
         <Link
           to={user?.role === 'instructor' ? '/instructor/dashboard' : '/student/dashboard'}

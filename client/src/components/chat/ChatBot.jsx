@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+// eslint-disable-next-line no-unused-vars
+import { motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { Bot, Send, X, Loader2, MessageCircle } from '../../lib/icons';
 import { aiAPI } from '../../services/api';
 import { chatBubble } from '../../animations/motionVariants';
@@ -8,7 +10,7 @@ import { chatBubble } from '../../animations/motionVariants';
 const WELCOME = {
   role: 'assistant',
   content:
-    "Hi! I'm LearnHub AI — your learning assistant. Ask about study tips, career paths, how to get started, or anything about the platform. For finding courses, use the AI Course Search box on the home page.",
+    "Hi! I'm GyaanMate AI — your learning assistant. Ask about study tips, career paths, how to get started, or anything about the platform. For finding courses, use the AI Course Search box on the home page.",
 };
 
 const QUICK_PROMPTS = [
@@ -116,7 +118,7 @@ export default function ChatBot() {
                   <Bot className="text-indigo-400" size={20} />
                 </motion.div>
                 <div>
-                  <p className="font-semibold text-white text-sm">LearnHub AI Chat</p>
+                  <p className="font-semibold text-white text-sm">GyaanMate AI</p>
                   <p className="text-[10px] text-slate-400">Conversation · not course search</p>
                 </div>
               </motion.div>

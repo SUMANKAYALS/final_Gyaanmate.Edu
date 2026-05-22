@@ -7,6 +7,13 @@ import {
   deleteCourse,
   getInstructorCourses,
 } from '../controllers/courseController.js';
+import {
+  createFeedback,
+  getCourseFeedbacks,
+  updateFeedbackSettings,
+  updateFeedbackVisibility,
+  deleteFeedback,
+} from '../controllers/feedbackController.js';
 import { protect, authorize } from '../middleware/auth.js';
 import { courseUpload, validateUploadSizes } from '../middleware/upload.js';
 
@@ -35,4 +42,9 @@ router.post(
 );
 router.put('/:id', protect, authorize('instructor', 'admin'), updateCourse);
 router.delete('/:id', protect, authorize('instructor', 'admin'), deleteCourse);
+router.patch('/:id/feedback/settings', protect, authorize('instructor', 'admin'), updateFeedbackSettings);
+router.patch('/:id/feedback/:feedbackId', protect, authorize('instructor', 'admin'), updateFeedbackVisibility);
+router.delete('/:id/feedback/:feedbackId', protect, authorize('instructor', 'admin'), deleteFeedback);
+router.post('/:id/feedback', protect, createFeedback);
+router.get('/:id/feedback', protect, getCourseFeedbacks);
 export default router;

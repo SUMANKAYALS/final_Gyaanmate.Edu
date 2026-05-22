@@ -10,7 +10,13 @@ api.interceptors.request.use((config) => {
     delete config.headers['Content-Type'];
   }
   const url = config.url || '';
-  const isAuthRequest = url.includes('/auth/login') || url.includes('/auth/register');
+  const isAuthRequest =
+    url.includes('/auth/login') ||
+    url.includes('/auth/register') ||
+    url.includes('/auth/forgot-password') ||
+    url.includes('/auth/reset-password') ||
+    url.includes('/auth/verify-email') ||
+    url.includes('/auth/resend-otp');
   if (isAuthRequest) {
     delete config.headers.Authorization;
     return config;
@@ -54,6 +60,8 @@ export const authAPI = {
   register: (data) => api.post('/auth/register', data),
   verifyEmail: (data) => api.post('/auth/verify-email', data),
   resendOtp: (data) => api.post('/auth/resend-otp', data),
+  forgotPassword: (data) => api.post('/auth/forgot-password', data),
+  resetPassword: (data) => api.post('/auth/reset-password', data),
   me: () => api.get('/auth/me'),
   updateProfile: (data) => api.put('/auth/profile', data),
 };
@@ -61,6 +69,12 @@ export const authAPI = {
 export const courseAPI = {
   getAll: (params) => api.get('/courses', { params }),
   getById: (id) => api.get(`/courses/${id}`),
+  getFeedbacks: (id) => api.get(`/courses/${id}/feedback`),
+  submitFeedback: (id, data) => api.post(`/courses/${id}/feedback`, data),
+  updateFeedbackSettings: (id, data) => api.patch(`/courses/${id}/feedback/settings`, data),
+  updateFeedbackVisibility: (courseId, feedbackId, data) =>
+    api.patch(`/courses/${courseId}/feedback/${feedbackId}`, data),
+  deleteFeedback: (courseId, feedbackId) => api.delete(`/courses/${courseId}/feedback/${feedbackId}`),
   create: (data) => api.post('/courses', data),
   createWithUpload: (formData, onProgress) =>
     api.post('/courses', formData, {
