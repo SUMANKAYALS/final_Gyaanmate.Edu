@@ -23,8 +23,8 @@ const PORT = process.env.PORT || 5000;
 app.use(
   cors({
     origin: [
+      'https://final-gyaanmate-edu.vercel.app',
       'http://localhost:5173',
-      'https://final-gyaanmate-edu.vercel.app'
     ],
     credentials: true,
   })
