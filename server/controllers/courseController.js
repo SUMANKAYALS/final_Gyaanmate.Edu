@@ -61,6 +61,24 @@ async function buildCoursePayload(body, files) {
     data.introVideo = await uploadVideo(video.buffer);
   }
 
+  const lessonFiles = files?.lessonVideos || [];
+  const lessonTitles = parseList(body.lessonTitles);
+  const lessonDurations = parseList(body.lessonDurations);
+
+  if (lessonFiles.length) {
+    data.lessons = await Promise.all(
+      lessonFiles.map(async (file, index) => {
+        const videoUrl = await uploadVideo(file.buffer);
+        return {
+          title: lessonTitles[index] || file.originalname || `Lesson ${index + 1}`,
+          duration: lessonDurations[index] || '10 min',
+          videoUrl,
+          order: index + 1,
+        };
+      })
+    );
+  }
+
   const pdfs = files?.pdfs || [];
   if (pdfs.length) {
     data.resources = await Promise.all(
@@ -68,16 +86,16 @@ async function buildCoursePayload(body, files) {
     );
   }
 
-  const lessons = [];
-  if (data.introVideo) {
-    lessons.push({
-      title: 'Course Introduction',
-      duration: body.duration?.trim() || '10 min',
-      videoUrl: data.introVideo,
-      order: 1,
-    });
+  if (!data.lessons && data.introVideo) {
+    data.lessons = [
+      {
+        title: 'Course Introduction',
+        duration: body.duration?.trim() || '10 min',
+        videoUrl: data.introVideo,
+        order: 1,
+      },
+    ];
   }
-  if (lessons.length) data.lessons = lessons;
 
   return data;
 }

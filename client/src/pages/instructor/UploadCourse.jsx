@@ -125,14 +125,18 @@ export default function UploadCourse() {
   const [thumbnailPreview, setThumbnailPreview] = useState('');
   const [introVideo, setIntroVideo] = useState(null);
   const [videoPreview, setVideoPreview] = useState('');
+  const [lessons, setLessons] = useState([]);
   const [pdfs, setPdfs] = useState([]);
 
   useEffect(() => {
     return () => {
       if (thumbnailPreview) URL.revokeObjectURL(thumbnailPreview);
       if (videoPreview) URL.revokeObjectURL(videoPreview);
+      lessons.forEach((lesson) => {
+        if (lesson.preview) URL.revokeObjectURL(lesson.preview);
+      });
     };
-  }, [thumbnailPreview, videoPreview]);
+  }, [thumbnailPreview, videoPreview, lessons]);
 
   const set = (key, value) => setForm((f) => ({ ...f, [key]: value }));
 
@@ -178,6 +182,49 @@ export default function UploadCourse() {
     setPdfs((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const setLessonField = (index, key, value) => {
+    setLessons((prev) =>
+      prev.map((lesson, i) => (i === index ? { ...lesson, [key]: value } : lesson))
+    );
+  };
+
+  const pickLessonVideo = (index, file) => {
+    if (!VIDEO_TYPES.includes(file.type)) {
+      toast.error('Lesson video must be MP4, MOV, or MKV');
+      return;
+    }
+    if (file.size > MAX_VIDEO) {
+      toast.error('Lesson video must be 500MB or smaller');
+      return;
+    }
+    const preview = URL.createObjectURL(file);
+    setLessonField(index, 'video', file);
+    setLessonField(index, 'preview', preview);
+  };
+
+  const addLesson = () => {
+    setLessons((prev) => [
+      ...prev,
+      {
+        title: `Lesson ${prev.length + 1}`,
+        duration: '10 min',
+        video: null,
+        preview: '',
+      },
+    ]);
+  };
+
+  const removeLesson = (index) => {
+    setLessons((prev) => {
+      const selected = prev[index];
+      if (selected?.preview) URL.revokeObjectURL(selected.preview);
+      return prev.filter((_, i) => i !== index).map((lesson, i) => ({
+        ...lesson,
+        title: lesson.title.startsWith('Lesson ') ? `Lesson ${i + 1}` : lesson.title,
+      }));
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!thumbnail) {
@@ -201,6 +248,17 @@ export default function UploadCourse() {
     fd.append('whatYouWillLearn', form.whatYouWillLearn);
     fd.append('thumbnail', thumbnail);
     if (introVideo) fd.append('introVideo', introVideo);
+    if (lessons.length) {
+      const missingVideo = lessons.find((lesson) => !lesson.video);
+      if (missingVideo) {
+        toast.error('Every lesson must include a video file.');
+        setPublishing(false);
+        return;
+      }
+      lessons.forEach((lesson) => fd.append('lessonVideos', lesson.video));
+      fd.append('lessonTitles', JSON.stringify(lessons.map((lesson) => lesson.title)));
+      fd.append('lessonDurations', JSON.stringify(lessons.map((lesson) => lesson.duration)));
+    }
     pdfs.forEach((pdf) => fd.append('pdfs', pdf));
 
     setPublishing(true);
@@ -397,6 +455,90 @@ export default function UploadCourse() {
                 ))}
               </div>
             )}
+          </div>
+
+          <div>
+            <FieldLabel icon={Video}>Course lessons</FieldLabel>
+            <div className="space-y-4">
+              {lessons.map((lesson, index) => (
+                <div key={index} className="border border-slate-700/60 rounded-2xl p-4 bg-slate-950/50">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex-1 min-w-0">
+                      <FieldLabel icon={BookOpen} required>Lesson title</FieldLabel>
+                      <InputField
+                        icon={BookOpen}
+                        required
+                        value={lesson.title}
+                        onChange={(e) => setLessonField(index, 'title', e.target.value)}
+                        placeholder={`Lesson ${index + 1} title`}
+                      />
+                    </div>
+                    <div className="w-full sm:w-56">
+                      <FieldLabel icon={Clock}>Duration</FieldLabel>
+                      <InputField
+                        icon={Clock}
+                        value={lesson.duration}
+                        onChange={(e) => setLessonField(index, 'duration', e.target.value)}
+                        placeholder="e.g. 12 min"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    {!lesson.video ? (
+                      <FileDropzone
+                        accept=".mp4,.mov,.mkv,video/mp4,video/quicktime,video/x-matroska"
+                        maxSize={MAX_VIDEO}
+                        label="Upload lesson video"
+                        hint="MP4, MOV, MKV · Max 500MB"
+                        icon={Video}
+                        onFiles={(file) => pickLessonVideo(index, file)}
+                        disabled={publishing}
+                      />
+                    ) : (
+                      <div className="space-y-3">
+                        <FileChip
+                          name={lesson.video.name}
+                          size={lesson.video.size}
+                          icon={Video}
+                          onRemove={() => {
+                            if (lesson.preview) URL.revokeObjectURL(lesson.preview);
+                            setLessonField(index, 'video', null);
+                            setLessonField(index, 'preview', '');
+                          }}
+                        />
+                        {lesson.preview && (
+                          <video
+                            src={lesson.preview}
+                            controls
+                            className="w-full rounded-xl border border-slate-700/60 max-h-64 bg-black"
+                          />
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="mt-3 flex justify-end">
+                    <button
+                      type="button"
+                      onClick={() => removeLesson(index)}
+                      disabled={publishing || lessons.length <= 1}
+                      className="text-sm text-red-400 hover:text-red-300 disabled:opacity-50"
+                    >
+                      Remove lesson
+                    </button>
+                  </div>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={addLesson}
+                disabled={publishing}
+                className="inline-flex items-center gap-2 px-4 py-3 rounded-xl border border-indigo-500/30 text-indigo-300 hover:bg-indigo-500/10 transition"
+              >
+                Add lesson
+              </button>
+            </div>
           </div>
         </SectionCard>
 
