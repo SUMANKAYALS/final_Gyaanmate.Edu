@@ -1,4 +1,4 @@
-# GyaanMate.edu — Global Learning Platform
+# Gyaanmate — Global Learning Platform
 
 AI-powered online learning platform (Udemy/Coursera-style) with semantic search, instructor dashboards, payments, and PDF receipts.
 

@@ -58,9 +58,9 @@ function localBotReply(query, courses) {
     return `Here are some courses that match what you asked:\n\n${list}\n\nTap a course card below to view details, or browse all courses on LearnHub!`;
   }
   if (/^(hi|hello|hey|good\s)/.test(q)) {
-    return "Hello! I'm GyaanMate.edu. I can help you discover courses, plan what to learn next, or answer study questions. What would you like to learn?";
+    return "Hello! I'm Gyaanmate. I can help you discover courses, plan what to learn next, or answer study questions. What would you like to learn?";
   }
-  return "I'm GyaanMate.edu! Ask me about any topic — for example: \"React for beginners\", \"best AI courses\", or \"how do I start coding?\". I'll suggest courses from our catalog.";
+  return "I'm Gyaanmate! Ask me about any topic — for example: \"React for beginners\", \"best AI courses\", or \"how do I start coding?\". I'll suggest courses from our catalog.";
 }
 
 /** General conversational chatbot (not JSON-only search mode) */

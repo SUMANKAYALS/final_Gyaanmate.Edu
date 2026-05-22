@@ -25,7 +25,7 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/api/health', (_, res) => {
   res.json({
     status: 'ok',
-    platform: 'GyaanMate.edu',
+    platform: 'Gyaanmate',
     cloudinary: isCloudinaryConfigured(),
   });
 });
@@ -48,7 +48,7 @@ connectDB()
   .then(() => {
     initCloudinary();
     initializeSocket(server);
-    server.listen(PORT, () => console.log(`LearnHub API running on port ${PORT}`));
+    server.listen(PORT, () => console.log(`Gyaanmate API running on port ${PORT}`));
   })
   .catch((err) => {
     console.error('DB connection failed:', err.message);

@@ -43,7 +43,7 @@ export default function Navbar({ onCartClick }) {
           <div className="flex justify-between items-center gap-3">
           <Link to="/" className="flex items-center gap-2 text-xl font-bold shrink-0">
             <GraduationCap className="text-indigo-400 text-2xl" />
-            <span className="gradient-text">GyaanMate.edu</span>
+            <span className="gradient-text">Gyaanmate</span>
           </Link>
 
           <div className="flex items-center gap-2 lg:hidden">

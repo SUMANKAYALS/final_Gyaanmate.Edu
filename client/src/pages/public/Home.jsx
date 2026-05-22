@@ -46,15 +46,6 @@ export default function Home() {
         <motion.div id="ai-search" className="relative max-w-3xl mx-auto scroll-mt-24">
           <AISearchEngine initialQuery={aiQuery} onQueryChange={handleQueryChange} />
 
-          <p className="text-center mt-4">
-            <Link
-              to="/search"
-              className="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-indigo-300 transition"
-            >
-              <Search size={13} />
-              Prefer exact keywords? Use navbar search
-            </Link>
-          </p>
         </motion.div>
 
         <motion.div

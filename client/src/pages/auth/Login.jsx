@@ -69,7 +69,7 @@ export default function Login() {
         className="w-full max-w-md glass-card p-8 relative z-10"
       >
         <h2 className="text-2xl font-bold gradient-text text-center mb-6">
-          Sign In to GyaanMate.edu
+          Sign In to Gyaanmate
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">

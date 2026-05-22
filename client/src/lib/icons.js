@@ -1,5 +1,5 @@
 /**
- * Central Lucide icon exports for consistent UI across GyaanMate.edu.
+ * Central Lucide icon exports for consistent UI across Gyaanmate.
  * @see https://lucide.dev/icons
  */
 export {

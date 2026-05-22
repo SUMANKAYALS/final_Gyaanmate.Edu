@@ -20,11 +20,11 @@
 //   await transporter.sendMail({
 //     from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
 //     to,
-//     subject: 'Verify your Gyaanmate.Edu account',
-//     text: `Your Gyaanmate.Edu verification code is ${otp}. It expires in 15 minutes.`,
+//     subject: 'Verify your Gyaanmate account',
+//     text: `Your Gyaanmate verification code is ${otp}. It expires in 15 minutes.`,
 //     html: `
 //       <div style="font-family: Arial, sans-serif; color: #1f2937;">
-//         <h2>Verify your Gyaanmate.Edu account</h2>
+//         <h2>Verify your Gyaanmate account</h2>
 //         <p>Your verification code is:</p>
 //         <p style="font-size: 24px; font-weight: bold;">${otp}</p>
 //         <p>This code expires in 15 minutes.</p>
@@ -55,10 +55,10 @@ export const sendVerificationEmail = async (to, otp) => {
   }
 
   await transporter.sendMail({
-    from: `"Gyaanmate.Edu" <${process.env.EMAIL_FROM || process.env.EMAIL_USER}>`,
+    from: `"Gyaanmate" <${process.env.EMAIL_FROM || process.env.EMAIL_USER}>`,
     to,
-    subject: 'Verify your Gyaanmate.Edu account',
-    text: `Your Gyaanmate.Edu verification code is ${otp}. It expires in 15 minutes.`,
+    subject: 'Verify your Gyaanmate account',
+    text: `Your Gyaanmate verification code is ${otp}. It expires in 15 minutes.`,
     html: `
       <!DOCTYPE html>
       <html lang="en">
@@ -88,7 +88,7 @@ export const sendVerificationEmail = async (to, otp) => {
                     "
                   >
                     <h1 style="margin:0; font-size:32px; font-weight:700;">
-                      Gyaanmate.Edu
+                      Gyaanmate
                     </h1>
 
                     <p style="margin-top:12px; font-size:16px; opacity:0.95;">
@@ -106,7 +106,7 @@ export const sendVerificationEmail = async (to, otp) => {
                     </h2>
 
                     <p style="font-size:16px; line-height:28px; color:#4b5563;">
-                      Welcome to <strong>Gyaanmate.Edu</strong> 🎉
+                      Welcome to <strong>Gyaanmate</strong> 🎉
                       <br /><br />
                       Please use the verification code below to activate your account.
                     </p>
@@ -177,7 +177,7 @@ export const sendVerificationEmail = async (to, otp) => {
                     "
                   >
                     <p style="margin:0; font-size:14px; color:#6b7280;">
-                      © 2026 Gyaanmate.Edu — All rights reserved.
+                      © 2026 Gyaanmate — All rights reserved.
                     </p>
 
                     <p style="margin-top:8px; font-size:13px; color:#9ca3af;">
@@ -206,9 +206,9 @@ export const sendPasswordResetEmail = async (to, otp) => {
   }
 
   await transporter.sendMail({
-    from: `"Gyaanmate.Edu" <${process.env.EMAIL_FROM || process.env.EMAIL_USER}>`,
+    from: `"Gyaanmate" <${process.env.EMAIL_FROM || process.env.EMAIL_USER}>`,
     to,
-    subject: 'Reset your Gyaanmate.Edu password',
+    subject: 'Reset your Gyaanmate password',
     text: `Your password reset code is ${otp}. It expires in 15 minutes. If you did not request this, ignore this email.`,
     html: `
       <!DOCTYPE html>
@@ -220,7 +220,7 @@ export const sendPasswordResetEmail = async (to, otp) => {
             <table width="600" cellpadding="0" cellspacing="0" style="background:#fff; border-radius:18px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,0.08);">
               <tr>
                 <td style="background:linear-gradient(135deg, #4f46e5, #7c3aed); padding:36px 30px; text-align:center; color:white;">
-                  <h1 style="margin:0; font-size:28px;">Gyaanmate.Edu</h1>
+                  <h1 style="margin:0; font-size:28px;">Gyaanmate</h1>
                   <p style="margin-top:10px; font-size:15px; opacity:0.95;">Password reset request</p>
                 </td>
               </tr>
@@ -238,7 +238,7 @@ export const sendPasswordResetEmail = async (to, otp) => {
               </tr>
               <tr>
                 <td style="background:#f9fafb; padding:20px; text-align:center; border-top:1px solid #e5e7eb;">
-                  <p style="margin:0; font-size:13px; color:#9ca3af;">© 2026 Gyaanmate.Edu</p>
+                  <p style="margin:0; font-size:13px; color:#9ca3af;">© 2026 Gyaanmate</p>
                 </td>
               </tr>
             </table>
