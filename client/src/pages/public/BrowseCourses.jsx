@@ -28,7 +28,7 @@ export default function BrowseCourses() {
       <motion.h1 initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-3xl font-bold mb-2 gradient-text">
         All Courses
       </motion.h1>
-      <p className="text-slate-400 mb-6">Browse {categories.length} categories and every course on LearnHub AI</p>
+      <p className="text-slate-400 mb-6">Browse {categories.length} categories and every course on GyaanMate.edu</p>
 
       <motion.div
         initial={{ opacity: 0, y: 10 }}

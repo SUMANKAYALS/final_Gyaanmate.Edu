@@ -106,7 +106,7 @@ export default function AISearchBar() {
                   className="flex items-center gap-2"
                 >
                   <Bot className="text-indigo-400 text-xl" />
-                  <span className="font-semibold gradient-text">LearnHub AI · Gemini</span>
+                  <span className="font-semibold gradient-text">GyaanMate.edu · Gemini</span>
                 </motion.div>
                 <button onClick={() => setOpen(false)} className="text-slate-400 hover:text-white p-1">
                   <X size={18} />

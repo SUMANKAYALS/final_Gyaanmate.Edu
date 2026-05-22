@@ -40,6 +40,7 @@ const courseSchema = new mongoose.Schema(
     whatYouWillLearn: [String],
     resources: [resourceSchema],
     isPublished: { type: Boolean, default: true },
+    feedbackEnabled: { type: Boolean, default: true },
     language: { type: String, default: 'English' },
     searchText: { type: String, index: 'text' },
   },

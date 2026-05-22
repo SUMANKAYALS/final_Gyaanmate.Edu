@@ -25,7 +25,7 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/api/health', (_, res) => {
   res.json({
     status: 'ok',
-    platform: 'LearnHub AI',
+    platform: 'GyaanMate.edu',
     cloudinary: isCloudinaryConfigured(),
   });
 });

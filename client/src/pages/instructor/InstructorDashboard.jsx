@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import toast from 'react-hot-toast';
 import { dashboardAPI, courseAPI, enrollmentAPI, communityAPI } from '../../services/api';
-import { Users, DollarSign, BookOpen, Star, TrendingUp, MessageSquare, Edit2, Trash2, Eye, Plus } from '../../lib/icons';
+import { Users, DollarSign, BookOpen, Star, TrendingUp, MessageSquare, Edit2, Trash2, Eye, Plus, EyeOff } from '../../lib/icons';
 
 export default function InstructorDashboard() {
   const [data, setData] = useState(null);
@@ -11,6 +12,11 @@ export default function InstructorDashboard() {
   const [communityChannels, setCommunityChannels] = useState([]);
   const [activeTab, setActiveTab] = useState('overview');
   const [loading, setLoading] = useState(true);
+  const [myCourses, setMyCourses] = useState([]);
+  const [selectedCourseId, setSelectedCourseId] = useState('');
+  const [courseFeedbacks, setCourseFeedbacks] = useState([]);
+  const [feedbackEnabled, setFeedbackEnabled] = useState(true);
+  const [loadingFeedbacks, setLoadingFeedbacks] = useState(false);
 
   useEffect(() => {
     loadDashboardData();
@@ -18,13 +24,19 @@ export default function InstructorDashboard() {
 
   const loadDashboardData = async () => {
     try {
-      const [dashboardRes, coursesRes, channelsRes] = await Promise.all([
+      const [dashboardRes, coursesRes, myCoursesRes, channelsRes] = await Promise.all([
         dashboardAPI.instructor(),
         courseAPI.getAll({ limit: 50 }),
+        courseAPI.instructorCourses(),
         communityAPI.getChannels(),
       ]);
       setData(dashboardRes.data);
       setCourses(coursesRes.data.courses || []);
+      const owned = myCoursesRes.data.courses || [];
+      setMyCourses(owned);
+      if (owned.length && !selectedCourseId) {
+        setSelectedCourseId(owned[0]._id);
+      }
       setCommunityChannels(channelsRes.data.channels || []);
       
       // Load students from enrollments
@@ -39,6 +51,60 @@ export default function InstructorDashboard() {
   };
 
   const stats = data?.stats || {};
+
+  const loadInstructorFeedbacks = async (courseId) => {
+    if (!courseId) return;
+    setLoadingFeedbacks(true);
+    try {
+      const res = await courseAPI.getFeedbacks(courseId);
+      setCourseFeedbacks(res.data.feedbacks || []);
+      setFeedbackEnabled(res.data.feedbackEnabled !== false);
+    } catch {
+      setCourseFeedbacks([]);
+      toast.error('Could not load feedback');
+    } finally {
+      setLoadingFeedbacks(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'reviews' && selectedCourseId) {
+      loadInstructorFeedbacks(selectedCourseId);
+    }
+  }, [activeTab, selectedCourseId]);
+
+  const toggleFeedbackEnabled = async () => {
+    if (!selectedCourseId) return;
+    const next = !feedbackEnabled;
+    try {
+      await courseAPI.updateFeedbackSettings(selectedCourseId, { feedbackEnabled: next });
+      setFeedbackEnabled(next);
+      toast.success(next ? 'Feedback enabled for students' : 'Feedback disabled for students');
+    } catch {
+      toast.error('Failed to update feedback settings');
+    }
+  };
+
+  const toggleFeedbackVisible = async (feedbackId, visible) => {
+    try {
+      await courseAPI.updateFeedbackVisibility(selectedCourseId, feedbackId, { visible });
+      await loadInstructorFeedbacks(selectedCourseId);
+      toast.success(visible ? 'Review is now visible' : 'Review hidden from students');
+    } catch {
+      toast.error('Failed to update review');
+    }
+  };
+
+  const removeFeedback = async (feedbackId) => {
+    if (!window.confirm('Delete this review permanently?')) return;
+    try {
+      await courseAPI.deleteFeedback(selectedCourseId, feedbackId);
+      await loadInstructorFeedbacks(selectedCourseId);
+      toast.success('Review deleted');
+    } catch {
+      toast.error('Failed to delete review');
+    }
+  };
 
   if (loading) {
     return (
@@ -59,6 +125,7 @@ export default function InstructorDashboard() {
           { id: 'courses', label: 'Courses', icon: BookOpen },
           { id: 'students', label: 'Students', icon: Users },
           { id: 'community', label: 'Community', icon: MessageSquare },
+          { id: 'reviews', label: 'Reviews', icon: Star },
           { id: 'analytics', label: 'Analytics', icon: DollarSign },
         ].map((tab) => (
           <button
@@ -280,6 +347,99 @@ export default function InstructorDashboard() {
               </motion.div>
             ))}
           </div>
+        </motion.div>
+      )}
+
+      {/* Reviews Tab — instructor controls feedback */}
+      {activeTab === 'reviews' && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+          <h2 className="text-xl font-semibold mb-2">Course Reviews & Feedback</h2>
+          <p className="text-sm text-slate-400 mb-6">
+            Manage student reviews for your courses. Only enrolled students can view or submit feedback.
+          </p>
+
+          {myCourses.length === 0 ? (
+            <div className="glass-card p-8 text-center text-slate-400">
+              Upload a course first to manage feedback.
+            </div>
+          ) : (
+            <>
+              <div className="glass-card p-4 mb-6 flex flex-col sm:flex-row sm:items-center gap-4">
+                <div className="flex-1">
+                  <label className="text-sm text-slate-400 block mb-2">Select course</label>
+                  <select
+                    value={selectedCourseId}
+                    onChange={(e) => setSelectedCourseId(e.target.value)}
+                    className="w-full max-w-md bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white"
+                  >
+                    {myCourses.map((c) => (
+                      <option key={c._id} value={c._id}>{c.title}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm text-slate-400">Student feedback</span>
+                  <button
+                    type="button"
+                    onClick={toggleFeedbackEnabled}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+                      feedbackEnabled
+                        ? 'bg-emerald-600/20 text-emerald-300 border border-emerald-500/40'
+                        : 'bg-slate-700 text-slate-300 border border-slate-600'
+                    }`}
+                  >
+                    {feedbackEnabled ? 'Enabled' : 'Disabled'}
+                  </button>
+                </div>
+              </div>
+
+              {loadingFeedbacks ? (
+                <p className="text-slate-400 text-center py-8">Loading reviews...</p>
+              ) : courseFeedbacks.length === 0 ? (
+                <div className="glass-card p-8 text-center text-slate-400">No reviews for this course yet.</div>
+              ) : (
+                <div className="space-y-3">
+                  {courseFeedbacks.map((f) => (
+                    <motion.div key={f._id} className="glass-card p-5">
+                      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <p className="font-medium text-white">{f.name || 'Student'}</p>
+                            <span className="text-amber-400 text-sm">{f.rating}★</span>
+                            {!f.visible && (
+                              <span className="text-xs px-2 py-0.5 rounded bg-slate-700 text-slate-400">Hidden</span>
+                            )}
+                          </div>
+                          <p className="text-xs text-slate-500 mt-1">{new Date(f.createdAt).toLocaleString()}</p>
+                          {f.comment && (
+                            <p className="mt-2 text-slate-300 text-sm whitespace-pre-wrap">{f.comment}</p>
+                          )}
+                        </div>
+                        <div className="flex gap-2 shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => toggleFeedbackVisible(f._id, !f.visible)}
+                            className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300"
+                            title={f.visible ? 'Hide from students' : 'Show to students'}
+                          >
+                            {f.visible ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => removeFeedback(f._id)}
+                            className="p-2 rounded-lg bg-red-600/20 hover:bg-red-600/30 text-red-400"
+                            title="Delete review"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
         </motion.div>
       )}
 

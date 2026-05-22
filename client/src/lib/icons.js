@@ -1,5 +1,5 @@
 /**
- * Central Lucide icon exports for consistent UI across LearnHub AI.
+ * Central Lucide icon exports for consistent UI across GyaanMate.edu.
  * @see https://lucide.dev/icons
  */
 export {
@@ -72,6 +72,7 @@ export {
   MoreVertical,
   Pin,
   Eye,
+  EyeOff,
 } from 'lucide-react';
 
 export const PRESET_AVATARS = [

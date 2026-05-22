@@ -10,6 +10,8 @@ const userSchema = new mongoose.Schema(
     emailVerified: { type: Boolean, default: false },
     emailVerificationOtp: { type: String, select: false },
     emailVerificationOtpExpires: Date,
+    passwordResetOtp: { type: String, select: false },
+    passwordResetOtpExpires: Date,
     avatar: { type: String, default: '' },
     bio: { type: String, default: '' },
     enrolledCourses: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course' }],
@@ -34,6 +36,10 @@ userSchema.methods.comparePassword = function (candidate) {
 
 userSchema.methods.compareEmailOtp = function (candidate) {
   return bcrypt.compare(candidate, this.emailVerificationOtp);
+};
+
+userSchema.methods.comparePasswordResetOtp = function (candidate) {
+  return bcrypt.compare(candidate, this.passwordResetOtp);
 };
 
 export default mongoose.model('User', userSchema);

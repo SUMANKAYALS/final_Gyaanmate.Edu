@@ -9,7 +9,7 @@ export default function Footer() {
           <div>
             <div className="flex items-center gap-2 mb-4">
               <GraduationCap className="text-indigo-400" />
-              <h3 className="text-white text-lg font-semibold">LearnHub AI</h3>
+              <h3 className="text-white text-lg font-semibold">GyaanMate.edu</h3>
             </div>
             <p className="text-sm">
               Global AI-powered learning platform. Master any skill with intelligent course discovery powered by Google Gemini.
@@ -47,7 +47,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="border-t border-slate-700/50 mt-8 pt-6 flex flex-wrap justify-between text-sm">
-          <p>© {new Date().getFullYear()} LearnHub AI. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} GyaanMate.edu. All rights reserved.</p>
           <div className="flex gap-4">
             <Link to="/privacy-policy" className="hover:text-indigo-300">Privacy</Link>
             <Link to="/terms-of-service" className="hover:text-indigo-300">Terms</Link>

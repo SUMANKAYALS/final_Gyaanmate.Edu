@@ -4,6 +4,8 @@ import {
   login,
   verifyEmail,
   resendVerificationOtp,
+  forgotPassword,
+  resetPassword,
   getMe,
 } from '../controllers/authController.js';
 import { updateProfile } from '../controllers/userController.js';
@@ -14,6 +16,8 @@ router.post('/register', register);
 router.post('/login', login);
 router.post('/verify-email', verifyEmail);
 router.post('/resend-otp', resendVerificationOtp);
+router.post('/forgot-password', forgotPassword);
+router.post('/reset-password', resetPassword);
 router.get('/me', protect, getMe);
 router.put('/profile', protect, updateProfile);
 export default router;
