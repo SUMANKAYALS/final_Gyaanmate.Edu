@@ -1,0 +1,40 @@
+# dependencies
+node_modules/
+
+# environment variables
+.env
+server/.env
+
+# build files
+dist/
+build/
+
+# logs
+logs
+*.log
+npm-debug.log*
+
+# editor files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# cache
+.cache/
+.parcel-cache/
+
+# vite
+vite.svg
+
+# coverage
+coverage/
+
+# uploads
+uploads/
+
+# temporary files
+tmp/
+temp/
