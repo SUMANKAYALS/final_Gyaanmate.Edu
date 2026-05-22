@@ -42,7 +42,7 @@ export default function Footer() {
               <a href="#" className="p-2 rounded-lg bg-slate-800 hover:bg-indigo-600 transition"><Linkedin size={18} /></a>
             </div>
             <p className="flex items-center gap-2 mt-4 text-sm">
-              <Mail size={16} /> support@learnhub.ai
+              <Mail size={16} /> gyaanmate.edu@gmail.com
             </p>
           </div>
         </div>
