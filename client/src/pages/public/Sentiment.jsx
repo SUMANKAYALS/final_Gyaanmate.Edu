@@ -51,7 +51,7 @@ export default function Sentiment() {
             </div>
             <h1 className="mt-4 text-3xl font-bold text-white">Analyze tone and emotion instantly</h1>
             <p className="mt-3 text-slate-400 max-w-2xl">
-              Paste any text and LearnHub will classify its sentiment, show positive and negative words, and surface a confidence score.
+              Paste any text and Gyaanmate will classify its sentiment, show positive and negative words, and surface a confidence score.
             </p>
           </div>
           <div className="rounded-3xl border border-slate-700/60 bg-slate-900/70 px-4 py-3 text-sm text-slate-300">

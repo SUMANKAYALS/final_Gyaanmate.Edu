@@ -235,7 +235,7 @@ export default function Certificate() {
           {/* Certificate Footer */}
           <div className="border-t border-slate-700 pt-6 text-center">
             <p className="text-slate-400 text-sm mb-2">
-              Issued by LearnHub Platform
+              Issued by Gyaanmate Platform
             </p>
             <p className="text-slate-500 text-xs">
               Certificate ID: {enrollment._id}

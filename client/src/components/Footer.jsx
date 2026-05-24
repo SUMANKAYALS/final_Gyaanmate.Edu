@@ -30,7 +30,7 @@ export default function Footer() {
               <li><Link to="/login" className="hover:text-indigo-300">Sign In</Link></li>
               <li><Link to="/signup" className="hover:text-indigo-300">Create Account</Link></li>
               <li><Link to="/student/dashboard" className="hover:text-indigo-300">Student Dashboard</Link></li>
-              <li><Link to="/instructor/dashboard" className="hover:text-indigo-300">Teach on LearnHub</Link></li>
+              <li><Link to="/instructor/dashboard" className="hover:text-indigo-300">Teach on Gyaanmate</Link></li>
             </ul>
           </div>
           <div>

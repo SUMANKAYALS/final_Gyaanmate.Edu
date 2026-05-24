@@ -16,7 +16,7 @@ export default function DashboardLayout({ title, links }) {
       >
         <Link to="/" className="flex items-center gap-2 mb-8 text-lg font-bold">
           <GraduationCap className="text-indigo-400" />
-          <span className="gradient-text">LearnHub</span>
+          <span className="gradient-text">Gyaanmate</span>
         </Link>
         <p className="text-xs text-slate-500 uppercase tracking-wider mb-4">{title}</p>
         <nav className="space-y-1">

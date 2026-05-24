@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "node --watch index.js",
     "start": "node index.js",
-    "seed": "node utils/seedCourses.js"
+    "seed": "node utils/seedCourses.js",
+    "seed:demo": "node utils/seedDemoData.js"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
