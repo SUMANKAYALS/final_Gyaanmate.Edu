@@ -12,6 +12,7 @@ import paymentRoutes from './routes/paymentRoutes.js';
 import dashboardRoutes from './routes/dashboardRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
 import communityRoutes from './routes/communityRoutes.js';
+import notesRoutes from './routes/notesRoutes.js';
 import { initializeSocket } from './socket.js';
 
 const app = express();
@@ -49,6 +50,7 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/community', communityRoutes);
+app.use('/api/notes', notesRoutes);
 
 app.use((err, _req, res, _next) => {
   console.error(err);

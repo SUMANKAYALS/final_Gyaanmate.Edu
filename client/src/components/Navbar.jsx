@@ -44,6 +44,7 @@ const Navbar = ({ onCartClick }) => {
   }, [isProfileOpen]);
 
   const navigationLinks = [
+    { to: "/notes", text: "Study Materials" },
     { to: "/category/nursing", text: "Nursing" },
     { to: "/category/pharmacology", text: "Pharmacology" },
     { to: "/category/medical-devices", text: "Medical Devices" },

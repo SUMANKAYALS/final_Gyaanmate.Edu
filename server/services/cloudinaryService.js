@@ -5,8 +5,8 @@ let configured = false;
 export function isCloudinaryConfigured() {
   return Boolean(
     process.env.CLOUDINARY_CLOUD_NAME &&
-      process.env.CLOUDINARY_API_KEY &&
-      process.env.CLOUDINARY_API_SECRET
+    process.env.CLOUDINARY_API_KEY &&
+    process.env.CLOUDINARY_API_SECRET
   );
 }
 
@@ -76,7 +76,10 @@ export async function uploadPdf(buffer, originalName, folder = 'learnhub/resourc
   const baseName = originalName.replace(/\.pdf$/i, '').replace(/[^a-zA-Z0-9_-]/g, '_');
   const result = await uploadBuffer(buffer, {
     folder,
+    // resource_type: 'auto',
+    // public_id: `${baseName}-${Date.now()}.pdf`,
     resource_type: 'raw',
+    // format: 'pdf',
     public_id: `${baseName}-${Date.now()}`,
   });
   return {

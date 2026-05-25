@@ -22,6 +22,8 @@ import CoursePlayer from './pages/CoursePlayer';
 import Certificate from './pages/Certificate';
 import Account from './pages/Account';
 import Community from './pages/Community';
+import NotesList from './pages/NotesList';
+import NotesUpload from './pages/NotesUpload';
 import Login from './pages/auth/Login';
 import Signup from './pages/auth/Signup';
 import VerifyEmail from './pages/auth/VerifyEmail';
@@ -83,6 +85,8 @@ export default function App() {
             <Route path="/subscription" element={<Subscription />} />
             <Route path="/my-courses" element={<ProtectedRoute><MyCourses /></ProtectedRoute>} />
             <Route path="/community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
+            <Route path="/notes" element={<NotesList />} />
+            <Route path="/notes/upload" element={<ProtectedRoute><NotesUpload /></ProtectedRoute>} />
             <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
             <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
           </Route>

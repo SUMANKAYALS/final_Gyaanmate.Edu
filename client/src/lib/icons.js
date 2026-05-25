@@ -69,6 +69,7 @@ export {
   MessageSquare,
   Hash,
   Plus,
+  Heart,
   MoreVertical,
   Pin,
   Eye,

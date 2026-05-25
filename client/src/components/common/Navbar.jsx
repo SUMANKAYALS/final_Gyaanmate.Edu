@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { GraduationCap, ShoppingCart, User, Menu, X, LineChart, ChevronDown, Sparkles } from '../../lib/icons';
+import { GraduationCap, ShoppingCart, User, Menu, X, LineChart, ChevronDown, Sparkles, FileText } from '../../lib/icons';
 import { useAuthStore } from '../../store/authStore';
 import { getInitials } from '../../utils/avatar';
 import { useEnrollment } from '../../context/EnrollmentContext';
@@ -106,6 +106,10 @@ export default function Navbar({ onCartClick }) {
             <Link to="/browse" className="px-3 py-2 text-sm text-slate-300 hover:text-indigo-300 rounded-lg hover:bg-slate-800/50">
               All Courses
             </Link>
+            <Link to="/notes" className="flex items-center gap-1.5 px-3 py-2 text-sm text-slate-300 hover:text-indigo-300 rounded-lg hover:bg-slate-800/50">
+              <FileText size={16} />
+              Study Materials
+            </Link>
             <Link to="/subscription" className="px-3 py-2 text-sm text-slate-300 hover:text-indigo-300 rounded-lg hover:bg-slate-800/50">
               Subscription
             </Link>
@@ -206,6 +210,10 @@ export default function Navbar({ onCartClick }) {
             ))}
             <Link to="/browse" onClick={() => setMobileOpen(false)} className="block py-2 text-indigo-300 font-medium border-t border-slate-700/50 mt-2">
               All Courses
+            </Link>
+            <Link to="/notes" onClick={() => setMobileOpen(false)} className="flex items-center gap-2 py-2 text-slate-300 hover:text-indigo-300">
+              <FileText size={16} />
+              Study Materials
             </Link>
             <Link to="/subscription" onClick={() => setMobileOpen(false)} className="block py-2 text-slate-300 hover:text-indigo-300">
               Subscription

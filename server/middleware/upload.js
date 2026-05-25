@@ -37,6 +37,31 @@ export const courseUpload = multer({
   { name: 'pdfs', maxCount: 20 },
 ]);
 
+export const notesUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 50 * 1024 * 1024,
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.fieldname === 'file') {
+      if (!IMAGE_TYPES.includes(file.mimetype) && !PDF_TYPES.includes(file.mimetype)) {
+        return cb(new Error('File must be an image (JPG, PNG, WEBP) or PDF'));
+      }
+      return cb(null, true);
+    }
+    if (file.fieldname === 'thumbnail') {
+      if (!IMAGE_TYPES.includes(file.mimetype)) {
+        return cb(new Error('Thumbnail must be JPG, PNG, or WEBP'));
+      }
+      return cb(null, true);
+    }
+    cb(new Error('Unexpected upload field'));
+  },
+}).fields([
+  { name: 'file', maxCount: 1 },
+  { name: 'thumbnail', maxCount: 1 },
+]);
+
 export function validateUploadSizes(req, res, next) {
   const thumb = req.files?.thumbnail?.[0];
   if (thumb && thumb.size > 5 * 1024 * 1024) {
