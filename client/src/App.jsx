@@ -30,6 +30,18 @@ import VerifyEmail from './pages/auth/VerifyEmail';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
+import AISearchPage from './pages/public/AISearchPage';
+import About from './pages/About';
+import Contact from './pages/Contact';
+import StudyMaterial from './pages/StudyMaterial';
+import Bookmarks from './pages/Bookmarks';
+import GuestOnlyRoute from './components/GuestOnlyRoute';
+import NoteConverter from './pages/features/NoteConverter';
+import CareerRoadmap from './pages/features/CareerRoadmap';
+import VideoCuration from './pages/features/VideoCuration';
+import FocusAssistance from './pages/features/FocusAssistance';
+import MockTestGenerator from './pages/features/MockTestGenerator';
+import GamifiedStreaks from './pages/features/GamifiedStreaks';
 
 const studentLinks = [
   { to: '/student/dashboard', label: 'Overview' },
@@ -50,8 +62,8 @@ const adminLinks = [
 function LegacyAISearchRedirect() {
   const [params] = useSearchParams();
   const q = params.get('q');
-  if (q) return <Navigate to={`/?ai=${encodeURIComponent(q)}#ai-search`} replace />;
-  return <Navigate to="/#ai-search" replace />;
+  if (q) return <Navigate to={`/ai-search?q=${encodeURIComponent(q)}`} replace />;
+  return <Navigate to="/ai-search" replace />;
 }
 
 export default function App() {
@@ -65,7 +77,10 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/browse" element={<BrowseCourses />} />
             <Route path="/search" element={<SearchResults />} />
-            <Route path="/ai-search" element={<LegacyAISearchRedirect />} />
+            <Route path="/ai-search" element={<AISearchPage />} />
+            <Route path="/ai-search-legacy" element={<LegacyAISearchRedirect />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="/course/:id" element={<CourseDetails />} />
             <Route path="/category/:category" element={<CourseCategoryPage />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
@@ -85,7 +100,15 @@ export default function App() {
             <Route path="/subscription" element={<Subscription />} />
             <Route path="/my-courses" element={<ProtectedRoute><MyCourses /></ProtectedRoute>} />
             <Route path="/community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
-            <Route path="/notes" element={<NotesList />} />
+            <Route path="/notes" element={<NotesList variant="notes" />} />
+            <Route path="/study-material" element={<StudyMaterial />} />
+            <Route path="/bookmarks" element={<ProtectedRoute><Bookmarks /></ProtectedRoute>} />
+            <Route path="/mock-tests" element={<MockTestGenerator />} />
+            <Route path="/feature/note-converter" element={<GuestOnlyRoute><NoteConverter /></GuestOnlyRoute>} />
+            <Route path="/feature/career-roadmap" element={<CareerRoadmap />} />
+            <Route path="/feature/video-curation" element={<VideoCuration />} />
+            <Route path="/feature/focus-assistance" element={<FocusAssistance />} />
+            <Route path="/feature/streaks" element={<GamifiedStreaks />} />
             <Route path="/notes/upload" element={<ProtectedRoute><NotesUpload /></ProtectedRoute>} />
             <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
             <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />

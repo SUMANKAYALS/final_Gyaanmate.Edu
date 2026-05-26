@@ -1,134 +1,115 @@
-import React from 'react';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ScrollText, ChevronDown, Mail } from '../lib/icons';
+import GlassCard from '../components/ui/GlassCard';
 
-const TermsOfService = () => {
+const sections = [
+  {
+    title: 'Agreement to Terms',
+    content:
+      'By accessing or using GyaanMate, you agree to these Terms of Service. If you do not agree, please do not use the platform. These terms apply to all learners, instructors, and visitors.',
+  },
+  {
+    title: 'Platform Use',
+    content:
+      'GyaanMate grants you a limited, non-exclusive license to access course content and tools for personal learning. You may not copy, resell, scrape, or redistribute course materials without permission.',
+  },
+  {
+    title: 'Accounts & Enrollment',
+    content:
+      'You are responsible for keeping your login credentials secure. Course access, subscriptions, and certificates are tied to your account. Misuse, sharing accounts, or fraudulent enrollment may result in suspension.',
+  },
+  {
+    title: 'Payments & Subscriptions',
+    content:
+      'Paid courses and Pro subscriptions are billed as described at checkout. Refunds follow our published refund policy. We may change pricing with notice; existing enrollments remain valid unless stated otherwise.',
+  },
+  {
+    title: 'User Content',
+    content:
+      'Notes, uploads, and community posts you share remain yours, but you grant GyaanMate a license to host and display them on the platform. Do not upload content that infringes copyrights or violates applicable laws.',
+  },
+  {
+    title: 'AI Features',
+    content:
+      'AI search, chat, and study tools provide suggestions for learning support only. They are not professional advice. Verify important information and use your judgment when making academic or career decisions.',
+  },
+  {
+    title: 'Disclaimer',
+    content:
+      'GyaanMate is provided "as is" without warranties of uninterrupted service or specific learning outcomes. We are not liable for indirect damages arising from use of the platform, within limits permitted by law.',
+  },
+  {
+    title: 'Changes to Terms',
+    content:
+      'We may update these terms periodically. Material changes will be reflected by an updated date below. Continued use after changes constitutes acceptance of the revised terms.',
+  },
+];
+
+export default function TermsOfService() {
+  const [openIndex, setOpenIndex] = useState(0);
+
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <h1 className="text-3xl font-bold mb-8">Terms of Service</h1>
-      
-      <div className="space-y-8">
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">Agreement to Terms</h2>
-          <p className="text-gray-600">
-            By accessing or using Medi-Project's website, you agree to be bound by these Terms of
-            Service. If you disagree with any part of these terms, you may not access the website
-            or use our services.
-          </p>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">Use License</h2>
-          <div className="text-gray-600 space-y-4">
-            <p>
-              Permission is granted to temporarily access the materials (information or software) on
-              Medi-Project's website for personal, non-commercial transitory viewing only.
-            </p>
-            <p>This license shall automatically terminate if you violate any of these restrictions and
-              may be terminated by Medi-Project at any time.</p>
-          </div>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">Product Information</h2>
-          <div className="text-gray-600 space-y-4">
-            <p>
-              We strive to provide accurate product information, including descriptions, pricing,
-              and availability. However, we do not warrant that product descriptions or other
-              content is accurate, complete, reliable, current, or error-free.
-            </p>
-            <p>
-              Prices for our products are subject to change without notice. We reserve the right
-              to modify or discontinue any product without notice.
-            </p>
-          </div>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">Ordering and Payment</h2>
-          <ul className="list-disc pl-5 text-gray-600 space-y-2">
-            <li>You must be at least 18 years old to place an order</li>
-            <li>You agree to provide current, complete, and accurate purchase information</li>
-            <li>We reserve the right to refuse any order</li>
-            <li>Payment must be received prior to order fulfillment</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">Shipping and Delivery</h2>
-          <div className="text-gray-600 space-y-4">
-            <p>
-              We will make every effort to deliver products within the estimated delivery time.
-              However, we are not responsible for delivery delays beyond our control.
-            </p>
-            <p>
-              Risk of loss and title for items purchased pass to you upon delivery of the items
-              to the carrier.
-            </p>
-          </div>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">Returns and Refunds</h2>
-          <ul className="list-disc pl-5 text-gray-600 space-y-2">
-            <li>Returns must be initiated within 14 days of delivery</li>
-            <li>Products must be unused and in original packaging</li>
-            <li>Certain items are not eligible for return (e.g., personal care items)</li>
-            <li>Refunds will be processed within 5-7 business days</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">Disclaimer of Warranties</h2>
-          <p className="text-gray-600">
-            The materials on Medi-Project's website are provided on an 'as is' basis. Medi-Project
-            makes no warranties, expressed or implied, and hereby disclaims and negates all other
-            warranties including, without limitation, implied warranties or conditions of
-            merchantability, fitness for a particular purpose, or non-infringement of intellectual
-            property or other violation of rights.
-          </p>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">Limitation of Liability</h2>
-          <p className="text-gray-600">
-            In no event shall Medi-Project or its suppliers be liable for any damages (including,
-            without limitation, damages for loss of data or profit, or due to business
-            interruption) arising out of the use or inability to use the materials on
-            Medi-Project's website.
-          </p>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">Governing Law</h2>
-          <p className="text-gray-600">
-            These terms and conditions are governed by and construed in accordance with the laws,
-            and you irrevocably submit to the exclusive jurisdiction of the courts in that location.
-          </p>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">Changes to Terms</h2>
-          <p className="text-gray-600">
-            We reserve the right to modify these terms at any time. By using this website, you
-            agree to be bound by the current version of these Terms of Service.
-          </p>
-          <p className="text-gray-600 mt-2">
-            Last updated: {new Date().toLocaleDateString()}
-          </p>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">Contact Information</h2>
-          <p className="text-gray-600">
-            Questions about the Terms of Service should be sent to us at:
-            <br />
-            Email: legal@medi-project.com
-            <br />
-            Phone: +1 (555) 123-4567
-          </p>
-        </section>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="max-w-4xl mx-auto"
+    >
+      <div className="text-center mb-10">
+        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-violet-600/20 border border-violet-500/30 mb-4">
+          <ScrollText className="text-violet-400" size={28} />
+        </div>
+        <h1 className="text-4xl font-bold gradient-text mb-2">Terms of Service</h1>
+        <p className="text-slate-400">Rules and guidelines for using GyaanMate</p>
+        <p className="text-xs text-slate-500 mt-3">Last updated: {new Date().toLocaleDateString()}</p>
       </div>
-    </div>
-  );
-};
 
-export default TermsOfService; 
+      <div className="space-y-3">
+        {sections.map((section, index) => {
+          const isOpen = openIndex === index;
+          return (
+            <GlassCard key={section.title} className="overflow-hidden">
+              <button
+                type="button"
+                onClick={() => setOpenIndex(isOpen ? -1 : index)}
+                className="w-full flex items-center justify-between gap-4 p-5 sm:p-6 text-left hover:bg-white/5 transition"
+              >
+                <span className="font-semibold text-white">{section.title}</span>
+                <motion.span
+                  animate={{ rotate: isOpen ? 180 : 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="text-violet-400 shrink-0"
+                >
+                  <ChevronDown size={20} />
+                </motion.span>
+              </button>
+              <AnimatePresence initial={false}>
+                {isOpen && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.22 }}
+                    className="overflow-hidden"
+                  >
+                    <p className="px-5 sm:px-6 pb-5 sm:pb-6 text-slate-400 leading-relaxed border-t border-white/10 pt-4">
+                      {section.content}
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </GlassCard>
+          );
+        })}
+      </div>
+
+      <GlassCard className="p-6 sm:p-8 mt-6">
+        <h2 className="text-lg font-semibold text-white mb-2">Questions?</h2>
+        <p className="text-slate-400 flex items-center gap-2">
+          <Mail className="text-violet-400 shrink-0" size={18} />
+          legal@gyaanmate.edu · gyaanmate.edu@gmail.com
+        </p>
+      </GlassCard>
+    </motion.div>
+  );
+}
