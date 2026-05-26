@@ -146,6 +146,8 @@ import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useAuthStore } from '../../store/authStore';
+import { useTheme } from '../../context/ThemeContext';
+import { Sun, Moon } from '../../lib/icons';
 
 const LOGO_URL =
   'https://res.cloudinary.com/de8ntd31m/image/upload/v1779644841/WhatsApp_Image_2026-05-24_at_11.10.05_PM_s64mny.jpg';
@@ -157,6 +159,7 @@ export default function Login() {
   const [loading, setLoading]           = useState(false);
 
   const { login, user } = useAuthStore();
+  const { theme, toggleTheme } = useTheme();
   const navigate        = useNavigate();
   const location        = useLocation();
   const [searchParams]  = useSearchParams();
@@ -551,7 +554,15 @@ export default function Login() {
         }
       `}</style>
 
-      <div className="gm-root">
+      <div className="gm-root relative">
+        <button
+          type="button"
+          onClick={toggleTheme}
+          className="absolute top-4 right-4 z-20 p-2.5 rounded-xl border border-slate-200 bg-white/90 text-slate-600 hover:text-violet-600 shadow-sm"
+          aria-label="Toggle theme"
+        >
+          {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+        </button>
 
         {/* ══════════════ LEFT — FORM PANEL ══════════════ */}
         <motion.div

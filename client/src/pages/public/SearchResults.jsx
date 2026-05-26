@@ -4,10 +4,10 @@ import { motion } from 'framer-motion';
 import { Search, Sparkles } from '../../lib/icons';
 import { courseAPI } from '../../services/api';
 import CourseCard from '../../components/course/CourseCard';
+import { CourseCardSkeleton } from '../../components/ui/Skeleton';
 import { staggerContainer, fadeInUp } from '../../animations/motionVariants';
 
 export default function SearchResults() {
-  const { runAiSearch } = useChatBot();
   const [params] = useSearchParams();
   const q = params.get('q') || '';
   const [courses, setCourses] = useState([]);
@@ -28,9 +28,9 @@ export default function SearchResults() {
   }, [q]);
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-7xl mx-auto px-4 py-8">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-7xl mx-auto">
       <div className="flex items-center gap-3 mb-2">
-        <Search className="text-indigo-400" size={24} />
+        <Search className="text-violet-400" size={24} />
         <h1 className="text-2xl font-bold gradient-text">Search results</h1>
       </div>
       <p className="text-slate-400 mb-4">
@@ -43,17 +43,17 @@ export default function SearchResults() {
         )}
       </p>
       <Link
-        to={q ? `/?ai=${encodeURIComponent(q)}#ai-search` : '/#ai-search'}
+        to={q ? `/ai-search?q=${encodeURIComponent(q)}` : '/ai-search'}
         className="inline-flex items-center gap-2 mb-8 text-sm text-violet-300 hover:text-violet-200 transition"
       >
         <Sparkles size={16} />
-        Try smart AI course search on home
+        Try smart AI course search
       </Link>
 
       {loading ? (
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {[...Array(8)].map((_, i) => (
-            <div key={i} className="glass-card h-72 animate-pulse bg-slate-800/50" />
+            <CourseCardSkeleton key={i} />
           ))}
         </div>
       ) : courses.length > 0 ? (
@@ -77,7 +77,7 @@ export default function SearchResults() {
         >
           <p className="text-lg text-slate-300 font-medium">No courses found</p>
           <p className="text-slate-500 text-sm mt-2 mb-6">Try another keyword or browse all categories.</p>
-          <Link to="/browse" className="inline-block px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium">
+          <Link to="/browse" className="btn-primary">
             Browse all courses
           </Link>
         </motion.div>

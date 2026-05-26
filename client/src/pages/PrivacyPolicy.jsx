@@ -1,103 +1,104 @@
-import React from 'react';
+import { motion } from 'framer-motion';
+import { Shield, Mail } from '../lib/icons';
+import GlassCard from '../components/ui/GlassCard';
+import { fadeInUp, staggerContainer } from '../animations/motionVariants';
 
-const PrivacyPolicy = () => {
+const sections = [
+  {
+    title: 'Introduction',
+    body: 'At GyaanMate, we take your privacy seriously. This policy explains how we collect, use, and protect your information when you use our learning platform.',
+  },
+  {
+    title: 'Information We Collect',
+    list: [
+      'Account details (name, email, profile information)',
+      'Course enrollment and learning progress',
+      'Notes, bookmarks, and study materials you upload',
+      'Payment and subscription records (processed securely)',
+      'Device, browser, and usage analytics to improve the product',
+    ],
+  },
+  {
+    title: 'How We Use Your Information',
+    list: [
+      'Deliver courses, certificates, and personalized recommendations',
+      'Power AI search, chat, and study tools',
+      'Communicate about your account and platform updates',
+      'Improve security, performance, and user experience',
+      'Comply with legal obligations',
+    ],
+  },
+  {
+    title: 'Information Sharing',
+    body: 'We do not sell your personal data. We may share limited information with trusted service providers (hosting, payments, email) who help operate GyaanMate under strict confidentiality agreements.',
+  },
+  {
+    title: 'Data Security',
+    body: 'We use industry-standard safeguards including encryption in transit, access controls, and secure authentication. No online service can guarantee absolute security, but we continuously work to protect your data.',
+  },
+  {
+    title: 'Your Rights',
+    list: [
+      'Access and update your profile information',
+      'Request deletion of your account data',
+      'Opt out of non-essential marketing emails',
+      'Export your learning data where applicable',
+    ],
+  },
+  {
+    title: 'Updates to This Policy',
+    body: `We may update this policy from time to time. The "Last updated" date below reflects the latest version. Continued use of GyaanMate after changes means you accept the updated policy.`,
+  },
+];
+
+export default function PrivacyPolicy() {
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <h1 className="text-3xl font-bold mb-8">Privacy Policy</h1>
-      
-      <div className="space-y-8">
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">Introduction</h2>
-          <p className="text-gray-600">
-            At Medi-Project, we take your privacy seriously. This Privacy Policy explains how we collect,
-            use, disclose, and safeguard your information when you visit our website or make purchases.
-          </p>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">Information We Collect</h2>
-          <ul className="list-disc pl-5 text-gray-600 space-y-2">
-            <li>Personal information (name, email address, phone number)</li>
-            <li>Shipping and billing addresses</li>
-            <li>Payment information</li>
-            <li>Order history</li>
-            <li>Device and browser information</li>
-            <li>Usage data and preferences</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">How We Use Your Information</h2>
-          <ul className="list-disc pl-5 text-gray-600 space-y-2">
-            <li>Process and fulfill your orders</li>
-            <li>Communicate with you about your orders and account</li>
-            <li>Send promotional emails (with your consent)</li>
-            <li>Improve our website and services</li>
-            <li>Detect and prevent fraud</li>
-            <li>Comply with legal obligations</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">Information Sharing</h2>
-          <p className="text-gray-600">
-            We do not sell or rent your personal information to third parties. We may share your
-            information with:
-          </p>
-          <ul className="list-disc pl-5 text-gray-600 space-y-2 mt-2">
-            <li>Service providers (payment processors, shipping companies)</li>
-            <li>Law enforcement when required by law</li>
-            <li>Business partners (with your consent)</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">Data Security</h2>
-          <p className="text-gray-600">
-            We implement appropriate technical and organizational measures to protect your personal
-            information. However, no method of transmission over the internet is 100% secure.
-          </p>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">Your Rights</h2>
-          <p className="text-gray-600">
-            You have the right to:
-          </p>
-          <ul className="list-disc pl-5 text-gray-600 space-y-2 mt-2">
-            <li>Access your personal information</li>
-            <li>Correct inaccurate information</li>
-            <li>Request deletion of your information</li>
-            <li>Opt-out of marketing communications</li>
-            <li>Withdraw consent where applicable</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">Contact Us</h2>
-          <p className="text-gray-600">
-            If you have any questions about this Privacy Policy, please contact us at:
-            <br />
-            Email: privacy@medi-project.com
-            <br />
-            Phone: +1 (555) 123-4567
-          </p>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-semibold mb-4">Updates to This Policy</h2>
-          <p className="text-gray-600">
-            We may update this Privacy Policy from time to time. The updated version will be indicated by
-            an updated "Last updated" date and the updated version will be effective as soon as it is
-            accessible.
-          </p>
-          <p className="text-gray-600 mt-2">
-            Last updated: {new Date().toLocaleDateString()}
-          </p>
-        </section>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="max-w-4xl mx-auto"
+    >
+      <div className="text-center mb-10">
+        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-violet-600/20 border border-violet-500/30 mb-4">
+          <Shield className="text-violet-400" size={28} />
+        </div>
+        <h1 className="text-4xl font-bold gradient-text mb-2">Privacy Policy</h1>
+        <p className="text-slate-400">How GyaanMate handles and protects your data</p>
+        <p className="text-xs text-slate-500 mt-3">Last updated: {new Date().toLocaleDateString()}</p>
       </div>
-    </div>
-  );
-};
 
-export default PrivacyPolicy; 
+      <motion.div
+        variants={staggerContainer}
+        initial="initial"
+        animate="animate"
+        className="space-y-4"
+      >
+        {sections.map((section) => (
+          <motion.div key={section.title} variants={fadeInUp}>
+            <GlassCard className="p-6 sm:p-8">
+              <h2 className="text-lg font-semibold text-white mb-3">{section.title}</h2>
+              {section.body && <p className="text-slate-400 leading-relaxed">{section.body}</p>}
+              {section.list && (
+                <ul className="list-disc pl-5 text-slate-400 space-y-2 mt-1">
+                  {section.list.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              )}
+            </GlassCard>
+          </motion.div>
+        ))}
+
+        <motion.div variants={fadeInUp}>
+          <GlassCard className="p-6 sm:p-8">
+            <h2 className="text-lg font-semibold text-white mb-3">Contact Us</h2>
+            <p className="text-slate-400 flex items-center gap-2">
+              <Mail className="text-violet-400 shrink-0" size={18} />
+              privacy@gyaanmate.edu · gyaanmate.edu@gmail.com
+            </p>
+          </GlassCard>
+        </motion.div>
+      </motion.div>
+    </motion.div>
+  );
+}
