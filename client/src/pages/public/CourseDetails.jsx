@@ -99,17 +99,25 @@ export default function CourseDetails() {
   };
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-7xl mx-auto px-4 py-8">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-7xl mx-auto">
+      <div className="relative rounded-3xl overflow-hidden mb-8 glass-card border border-violet-500/20">
+        <div className="absolute inset-0 bg-gradient-to-r from-violet-900/40 via-slate-900/60 to-indigo-900/40" />
+        {getMediaUrl(course.image) && (
+          <img src={getMediaUrl(course.image)} alt="" className="absolute inset-0 w-full h-full object-cover opacity-25" />
+        )}
+        <div className="relative p-8 md:p-10">
+          <span className="px-3 py-1 rounded-full bg-violet-500/30 text-violet-200 text-sm border border-violet-500/40">{course.category}</span>
+          <h1 className="text-3xl md:text-4xl font-bold text-white mt-4 max-w-3xl">{course.title}</h1>
+          <p className="text-slate-300 mt-2 max-w-2xl">{course.description}</p>
+        </div>
+      </div>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="grid lg:grid-cols-3 gap-8"
+        className="grid lg:grid-cols-3 gap-8 px-0"
       >
         <div className="lg:col-span-2">
-          <span className="px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-sm">{course.category}</span>
-          <h1 className="text-3xl md:text-4xl font-bold text-white mt-4">{course.title}</h1>
-          <p className="text-slate-400 mt-2 text-lg">{course.description}</p>
-          <div className="flex gap-4 mt-4 text-sm text-slate-400">
+          <div className="flex gap-4 text-sm text-slate-400">
             <span className="flex items-center gap-1 text-amber-400">
               <Star size={16} className="fill-current" /> {course.rating}
               {canViewReviews && course.reviews > 0 && (
@@ -152,13 +160,20 @@ export default function CourseDetails() {
             <p className="mt-4 text-slate-400">{course.descriptionFull}</p>
           </div>
           <div className="mt-6">
-            <h2 className="text-xl font-semibold mb-4">Curriculum</h2>
-            {course.lessons?.map((l, i) => (
-              <div key={i} className="glass-card p-4 mb-2 flex justify-between">
-                <span>{l.title}</span>
-                <span className="text-slate-500 text-sm">{l.duration}</span>
-              </div>
-            ))}
+            <h2 className="text-xl font-semibold mb-4 gradient-text">Curriculum</h2>
+            <div className="space-y-2">
+              {course.lessons?.map((l, i) => (
+                <details key={i} className="glass-card group">
+                  <summary className="p-4 cursor-pointer flex justify-between items-center list-none">
+                    <span className="font-medium text-white">{l.title}</span>
+                    <span className="text-slate-500 text-sm">{l.duration}</span>
+                  </summary>
+                  <div className="px-4 pb-4 text-sm text-slate-400 border-t border-slate-700/40 pt-3">
+                    Lesson {i + 1} · {l.duration || 'Self-paced'}
+                  </div>
+                </details>
+              ))}
+            </div>
           </div>
 
           <div className="mt-8 glass-card p-6">
@@ -239,18 +254,32 @@ export default function CourseDetails() {
         </div>
         <motion.div
           whileHover={{ scale: 1.01 }}
-          className="glass-card p-6 h-fit sticky top-24"
+          className="glass-card p-6 h-fit sticky top-24 border border-violet-500/20"
         >
-          <p className="text-3xl font-bold text-emerald-400 mb-4">${course.price?.toFixed(2)}</p>
-          <p className="text-sm text-slate-400 mb-4">Instructor: {course.instructorName}</p>
+          <p className="text-3xl font-bold text-emerald-400 mb-1">${course.price?.toFixed(2)}</p>
+          <p className="text-sm text-slate-500 line-through mb-4">${((course.price || 0) * 1.35).toFixed(2)}</p>
+          <div className="flex items-center gap-3 mb-4 p-3 rounded-xl bg-slate-800/50">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-white font-bold">
+              {(course.instructorName || 'I')[0]}
+            </div>
+            <div>
+              <p className="text-xs text-slate-500">Instructor</p>
+              <p className="text-sm font-medium text-white">{course.instructorName}</p>
+            </div>
+          </div>
           {enrolled ? (
             <Link to={`/course/${id}/learn`} className="block w-full text-center py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 font-medium">
               Continue Learning
             </Link>
           ) : (
-            <button onClick={handleEnroll} className="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-medium mb-2">
-              Add to Cart
-            </button>
+            <>
+              <button onClick={handleEnroll} className="w-full py-3 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:opacity-90 font-medium mb-2">
+                Buy Now
+              </button>
+              <button onClick={handleEnroll} className="w-full py-3 rounded-xl border border-violet-500/50 text-violet-300 hover:bg-violet-500/10 font-medium">
+                Add to Cart
+              </button>
+            </>
           )}
         </motion.div>
       </motion.div>
