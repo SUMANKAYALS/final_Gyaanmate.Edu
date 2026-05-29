@@ -74,16 +74,16 @@ export default function Community() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">
+      <div className="community-page h-screen min-h-0 overflow-hidden bg-slate-950 text-white flex items-center justify-center">
         <div className="text-slate-400">Loading community...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white flex">
+    <div className="community-page h-screen min-h-0 overflow-hidden bg-slate-950 text-white flex">
       {/* Sidebar - Channel List */}
-      <div className="w-80 bg-slate-900 border-r border-slate-800 flex flex-col">
+      <div className="w-80 min-h-0 bg-slate-900 border-r border-slate-800 flex flex-col">
         <div className="p-4 border-b border-slate-800">
           <h1 className="text-xl font-bold mb-4 flex items-center gap-2">
             <Hash className="w-5 h-5 text-indigo-400" />
@@ -148,11 +148,11 @@ export default function Community() {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 min-h-0 flex flex-col">
         {selectedChannel ? (
           <>
             {/* Channel Header */}
-            <div className="bg-slate-900 border-b border-slate-800 p-4">
+            <div className="shrink-0 bg-slate-900 border-b border-slate-800 p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <Hash className="w-6 h-6 text-indigo-400" />

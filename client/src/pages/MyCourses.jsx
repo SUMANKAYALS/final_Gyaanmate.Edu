@@ -7,10 +7,13 @@ import { useAuthStore } from '../store/authStore';
 import { enrollmentAPI } from '../services/api';
 import { getMediaUrl } from '../utils/media';
 import { fadeInUp, staggerContainer } from '../animations/motionVariants';
+import { useTheme } from '../context/ThemeContext';
 
 export default function MyCourses() {
   const user = useAuthStore((s) => s.user);
   const { enrollmentCart } = useEnrollment();
+  const { theme } = useTheme();
+  const isLight = theme === 'light';
   const [enrollments, setEnrollments] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -43,10 +46,10 @@ export default function MyCourses() {
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          className="glass-card p-12 text-center max-w-lg mx-auto"
+          className={`glass-card p-12 text-center max-w-lg mx-auto ${isLight ? 'border border-blue-100 rounded-3xl shadow-xl shadow-blue-100/60' : ''}`}
         >
           <div className="text-5xl mb-4">📚</div>
-          <p className="text-slate-300 text-lg mb-2">You haven&apos;t enrolled in any courses yet</p>
+          <p className={`text-lg mb-2 ${isLight ? 'text-gray-800' : 'text-slate-300'}`}>You haven&apos;t enrolled in any courses yet</p>
           {enrollmentCart.length > 0 && (
             <p className="text-sm text-amber-400/90 mb-6 flex items-center justify-center gap-2">
               <ShoppingCart size={16} />
@@ -64,7 +67,7 @@ export default function MyCourses() {
             )}
             <Link
               to="/browse"
-              className="inline-block px-6 py-3 rounded-xl border border-slate-600 text-slate-200 hover:border-indigo-500 font-medium transition"
+              className={`inline-block px-6 py-3 rounded-xl border font-medium transition ${isLight ? 'border-blue-300 text-blue-700 hover:bg-blue-50' : 'border-slate-600 text-slate-200 hover:border-indigo-500'}`}
             >
               Explore Courses
             </Link>
@@ -113,8 +116,8 @@ export default function MyCourses() {
                 </div>
               </div>
               <div className="p-4">
-                <h3 className="text-lg font-semibold text-white mb-1 line-clamp-2">{course.title}</h3>
-                <p className="text-sm text-slate-400 mb-4">{course.instructorName}</p>
+                <h3 className={`text-lg font-semibold mb-1 line-clamp-2 ${isLight ? 'text-gray-900' : 'text-white'}`}>{course.title}</h3>
+                <p className={`text-sm mb-4 ${isLight ? 'text-gray-600' : 'text-slate-400'}`}>{course.instructorName}</p>
                 <div className="mb-4">
                   <motion.div className="flex justify-between text-sm mb-2">
                     <span className="text-slate-400">

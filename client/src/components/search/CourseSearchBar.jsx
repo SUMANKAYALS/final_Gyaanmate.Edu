@@ -114,7 +114,7 @@ export default function CourseSearchBar({ className = '', placeholder = 'Search 
   return (
     <div ref={wrapperRef} className={`relative w-full ${className}`}>
       <div
-        className={`flex items-center gap-2 rounded-xl border bg-slate-900/80 transition-all duration-200 ${
+        className={`course-search-shell flex items-center gap-2 rounded-xl border bg-slate-900/80 transition-all duration-200 ${
           open ? 'border-indigo-500/60 ring-2 ring-indigo-500/20 shadow-lg shadow-indigo-500/10' : 'border-slate-600/80 hover:border-slate-500'
         }`}
       >
@@ -162,7 +162,7 @@ export default function CourseSearchBar({ className = '', placeholder = 'Search 
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -6, scale: 0.98 }}
             transition={{ duration: 0.18, ease: 'easeOut' }}
-            className="absolute left-0 right-0 top-[calc(100%+8px)] z-[60] overflow-hidden rounded-xl border border-slate-700/80 bg-slate-900/95 backdrop-blur-xl shadow-2xl shadow-black/40"
+            className="course-search-dropdown absolute left-0 right-0 top-[calc(100%+8px)] z-[60] overflow-hidden rounded-xl border border-slate-700/80 bg-slate-900/95 backdrop-blur-xl shadow-2xl shadow-black/40"
           >
             {loading && !hasResults ? (
               <motion.div className="px-4 py-8 text-center text-sm text-slate-400">

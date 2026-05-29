@@ -6,6 +6,7 @@ import { courseAPI, enrollmentAPI, paymentAPI } from '../../services/api';
 import { getMediaUrl, isDirectVideoUrl } from '../../utils/media';
 import { useEnrollment } from '../../context/EnrollmentContext';
 import { useAuthStore } from '../../store/authStore';
+import { useTheme } from '../../context/ThemeContext';
 
 export default function CourseDetails() {
   const { id } = useParams();
@@ -16,6 +17,8 @@ export default function CourseDetails() {
   const [loading, setLoading] = useState(true);
   const { addToCart } = useEnrollment();
   const user = useAuthStore((s) => s.user);
+  const { theme } = useTheme();
+  const isLight = theme === 'light';
 
   const [feedbacks, setFeedbacks] = useState([]);
   const [rating, setRating] = useState(5);
@@ -99,16 +102,16 @@ export default function CourseDetails() {
   };
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-7xl mx-auto">
-      <div className="relative rounded-3xl overflow-hidden mb-8 glass-card border border-violet-500/20">
-        <div className="absolute inset-0 bg-gradient-to-r from-violet-900/40 via-slate-900/60 to-indigo-900/40" />
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="course-details-page max-w-7xl mx-auto">
+      <div className={`relative rounded-3xl overflow-hidden mb-8 glass-card ${isLight ? 'border border-blue-100 shadow-xl shadow-blue-100/60' : 'border border-violet-500/20'}`}>
+        <div className={`absolute inset-0 ${isLight ? 'bg-gradient-to-r from-blue-600/10 via-white/40 to-indigo-600/10' : 'bg-gradient-to-r from-violet-900/40 via-slate-900/60 to-indigo-900/40'}`} />
         {getMediaUrl(course.image) && (
-          <img src={getMediaUrl(course.image)} alt="" className="absolute inset-0 w-full h-full object-cover opacity-25" />
+          <img src={getMediaUrl(course.image)} alt="" className={`absolute inset-0 w-full h-full object-cover ${isLight ? 'opacity-45' : 'opacity-25'}`} />
         )}
         <div className="relative p-8 md:p-10">
-          <span className="px-3 py-1 rounded-full bg-violet-500/30 text-violet-200 text-sm border border-violet-500/40">{course.category}</span>
-          <h1 className="text-3xl md:text-4xl font-bold text-white mt-4 max-w-3xl">{course.title}</h1>
-          <p className="text-slate-300 mt-2 max-w-2xl">{course.description}</p>
+          <span className={`px-3 py-1 rounded-full text-sm border ${isLight ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-violet-500/30 text-violet-200 border-violet-500/40'}`}>{course.category}</span>
+          <h1 className={`text-3xl md:text-5xl font-bold mt-4 max-w-3xl ${isLight ? 'text-gray-900' : 'text-white'}`}>{course.title}</h1>
+          <p className={`mt-2 max-w-2xl ${isLight ? 'text-gray-700' : 'text-slate-300'}`}>{course.description}</p>
         </div>
       </div>
       <motion.div
@@ -117,7 +120,7 @@ export default function CourseDetails() {
         className="grid lg:grid-cols-3 gap-8 px-0"
       >
         <div className="lg:col-span-2">
-          <div className="flex gap-4 text-sm text-slate-400">
+          <div className={`flex gap-6 text-sm ${isLight ? 'text-gray-600' : 'text-slate-400'}`}>
             <span className="flex items-center gap-1 text-amber-400">
               <Star size={16} className="fill-current" /> {course.rating}
               {canViewReviews && course.reviews > 0 && (
@@ -150,25 +153,25 @@ export default function CourseDetails() {
               </div>
             )}
           </div>
-          <div className="mt-8 glass-card p-6">
-            <h2 className="text-xl font-semibold mb-4">What you&apos;ll learn</h2>
+          <div className={`mt-8 glass-card p-6 ${isLight ? 'border border-blue-100 shadow-lg shadow-blue-100/50' : ''}`}>
+            <h2 className={`text-xl font-semibold mb-4 ${isLight ? 'text-gray-900' : ''}`}>What you&apos;ll learn</h2>
             <ul className="grid sm:grid-cols-2 gap-2">
               {((course.whatYouWillLearn?.length ? course.whatYouWillLearn : course.skills) || []).map((s) => (
-                <li key={s} className="text-slate-300 text-sm">✓ {s}</li>
+                <li key={s} className={`text-sm ${isLight ? 'text-gray-700' : 'text-slate-300'}`}>✓ {s}</li>
               ))}
             </ul>
-            <p className="mt-4 text-slate-400">{course.descriptionFull}</p>
+            <p className={`mt-4 ${isLight ? 'text-gray-600' : 'text-slate-400'}`}>{course.descriptionFull}</p>
           </div>
           <div className="mt-6">
             <h2 className="text-xl font-semibold mb-4 gradient-text">Curriculum</h2>
             <div className="space-y-2">
               {course.lessons?.map((l, i) => (
-                <details key={i} className="glass-card group">
+                <details key={i} className={`glass-card group ${isLight ? 'border border-blue-100' : ''}`}>
                   <summary className="p-4 cursor-pointer flex justify-between items-center list-none">
-                    <span className="font-medium text-white">{l.title}</span>
-                    <span className="text-slate-500 text-sm">{l.duration}</span>
+                    <span className={`font-medium ${isLight ? 'text-gray-900' : 'text-white'}`}>{l.title}</span>
+                    <span className={`text-sm ${isLight ? 'text-gray-500' : 'text-slate-500'}`}>{l.duration}</span>
                   </summary>
-                  <div className="px-4 pb-4 text-sm text-slate-400 border-t border-slate-700/40 pt-3">
+                  <div className={`px-4 pb-4 text-sm border-t pt-3 ${isLight ? 'text-gray-600 border-blue-100' : 'text-slate-400 border-slate-700/40'}`}>
                     Lesson {i + 1} · {l.duration || 'Self-paced'}
                   </div>
                 </details>
@@ -176,7 +179,7 @@ export default function CourseDetails() {
             </div>
           </div>
 
-          <div className="mt-8 glass-card p-6">
+          <div className={`mt-8 glass-card p-6 ${isLight ? 'border border-blue-100 shadow-lg shadow-blue-100/50' : ''}`}>
             <h2 className="text-xl font-semibold mb-4">Student Feedback</h2>
 
             {!canViewReviews ? (
@@ -209,8 +212,8 @@ export default function CourseDetails() {
                 }
               }}>
                 <div className="flex items-center gap-3 mb-3">
-                  <label className="text-sm text-slate-300">Rating</label>
-                  <select value={rating} onChange={(e) => setRating(Number(e.target.value))} className="bg-slate-900 text-slate-200 px-2 py-1 rounded">
+                  <label className={`text-sm ${isLight ? 'text-gray-700' : 'text-slate-300'}`}>Rating</label>
+                  <select value={rating} onChange={(e) => setRating(Number(e.target.value))} className={`px-2 py-1 rounded ${isLight ? 'bg-white border border-blue-200 text-gray-800' : 'bg-slate-900 text-slate-200'}`}>
                     <option value={5}>5</option>
                     <option value={4}>4</option>
                     <option value={3}>3</option>
@@ -219,7 +222,7 @@ export default function CourseDetails() {
                   </select>
                 </div>
                 <div className="mb-3">
-                  <textarea value={comment} onChange={(e) => setComment(e.target.value)} placeholder="Write your feedback (optional)" className="w-full bg-slate-900 text-slate-200 p-2 rounded" rows={4} />
+                  <textarea value={comment} onChange={(e) => setComment(e.target.value)} placeholder="Write your feedback (optional)" className={`w-full p-2 rounded ${isLight ? 'bg-white border border-blue-200 text-gray-800 placeholder:text-gray-400' : 'bg-slate-900 text-slate-200'}`} rows={4} />
                 </div>
                 {feedbackError && <p className="text-sm text-rose-400 mb-3">{feedbackError}</p>}
                 <button disabled={submitting} type="submit" className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded text-white">{submitting ? 'Submitting...' : 'Submit Feedback'}</button>
@@ -254,17 +257,17 @@ export default function CourseDetails() {
         </div>
         <motion.div
           whileHover={{ scale: 1.01 }}
-          className="glass-card p-6 h-fit sticky top-24 border border-violet-500/20"
+          className={`glass-card p-6 h-fit sticky top-24 ${isLight ? 'border border-blue-100 rounded-3xl shadow-xl shadow-blue-100/70' : 'border border-violet-500/20'}`}
         >
-          <p className="text-3xl font-bold text-emerald-400 mb-1">${course.price?.toFixed(2)}</p>
-          <p className="text-sm text-slate-500 line-through mb-4">${((course.price || 0) * 1.35).toFixed(2)}</p>
-          <div className="flex items-center gap-3 mb-4 p-3 rounded-xl bg-slate-800/50">
+          <p className="text-4xl font-bold text-emerald-500 mb-1">${course.price?.toFixed(2)}</p>
+          <p className={`text-sm line-through mb-4 ${isLight ? 'text-gray-400' : 'text-slate-500'}`}>${((course.price || 0) * 1.35).toFixed(2)}</p>
+          <div className={`flex items-center gap-3 mb-4 p-3 rounded-xl ${isLight ? 'bg-blue-50 border border-blue-100' : 'bg-slate-800/50'}`}>
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-white font-bold">
               {(course.instructorName || 'I')[0]}
             </div>
             <div>
-              <p className="text-xs text-slate-500">Instructor</p>
-              <p className="text-sm font-medium text-white">{course.instructorName}</p>
+              <p className={`text-xs ${isLight ? 'text-gray-500' : 'text-slate-500'}`}>Instructor</p>
+              <p className={`text-sm font-medium ${isLight ? 'text-gray-900' : 'text-white'}`}>{course.instructorName}</p>
             </div>
           </div>
           {enrolled ? (
@@ -273,10 +276,10 @@ export default function CourseDetails() {
             </Link>
           ) : (
             <>
-              <button onClick={handleEnroll} className="w-full py-3 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:opacity-90 font-medium mb-2">
+              <button onClick={handleEnroll} className={`w-full py-3 rounded-xl font-medium mb-2 ${isLight ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-200/80 hover:shadow-blue-300/80' : 'bg-gradient-to-r from-violet-600 to-indigo-600 hover:opacity-90'}`}>
                 Buy Now
               </button>
-              <button onClick={handleEnroll} className="w-full py-3 rounded-xl border border-violet-500/50 text-violet-300 hover:bg-violet-500/10 font-medium">
+              <button onClick={handleEnroll} className={`w-full py-3 rounded-xl border font-medium ${isLight ? 'border-blue-300 text-blue-700 hover:bg-blue-50' : 'border-violet-500/50 text-violet-300 hover:bg-violet-500/10'}`}>
                 Add to Cart
               </button>
             </>

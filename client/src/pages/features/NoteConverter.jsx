@@ -36,9 +36,12 @@ export default function NoteConverter() {
   return (
     <FeaturePageShell
       title="AI Note Converter"
-      subtitle="Guests can try converting notes once. Sign in to upload and save study materials."
+      subtitle="Turn rough notes into clean summaries, key takeaways, and revision bullets."
       icon={FaRobot}
-      badge="Guest access"
+      badge="Study tool"
+      backTo="/notes"
+      backLabel="Back"
+      backMode="history"
     >
       <textarea
         value={input}
@@ -61,11 +64,14 @@ export default function NoteConverter() {
           <p className="text-slate-200 whitespace-pre-wrap text-sm leading-relaxed">{output}</p>
         </div>
       )}
-      <p className="text-sm text-slate-500 mt-6">
-        Already have an account?{' '}
-        <Link to="/login" className="text-violet-400 hover:text-violet-300">Sign in</Link>
-        {' '}to upload notes and access the full library.
-      </p>
+      <div className="mt-6 flex flex-wrap gap-3 text-sm">
+        <Link to="/notes/upload" className="btn-primary px-4 py-2 text-sm">
+          Upload Notes
+        </Link>
+        <Link to="/notes" className="btn-ghost px-4 py-2 text-sm">
+          Browse Notes
+        </Link>
+      </div>
     </FeaturePageShell>
   );
 }

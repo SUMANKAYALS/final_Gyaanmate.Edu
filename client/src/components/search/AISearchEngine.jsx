@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Send, Loader2, Bot, X } from '../../lib/icons';
 import { aiAPI } from '../../services/api';
+import { useTheme } from '../../context/ThemeContext';
 
 const AI_EXAMPLES = [
   'Show me React courses for beginners',
@@ -18,6 +19,8 @@ export default function AISearchEngine({
   onQueryChange,
   compact = false,
 }) {
+  const { theme } = useTheme();
+  const isLight = theme === 'light';
   const [query, setQuery] = useState(initialQuery);
   const [activeQuery, setActiveQuery] = useState(initialQuery);
   const [loading, setLoading] = useState(false);
@@ -78,7 +81,7 @@ export default function AISearchEngine({
   const canClear = Boolean(query.trim() || activeQuery || result);
 
   return (
-    <motion.div className={compact ? '' : 'w-full max-w-3xl mx-auto'}>
+    <motion.div className={`ai-search-engine ${compact ? '' : 'w-full max-w-3xl mx-auto'} ${isLight ? 'light' : ''}`}>
       <motion.div
         layout
         className={`relative rounded-2xl border bg-gradient-to-br from-indigo-950/50 via-slate-900/80 to-slate-900/80 transition-all duration-300 overflow-hidden ${

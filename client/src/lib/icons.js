@@ -44,6 +44,7 @@ export {
   Twitter,
   Instagram,
   Linkedin,
+  Github,
   Mail,
   Phone,
   Shield,
