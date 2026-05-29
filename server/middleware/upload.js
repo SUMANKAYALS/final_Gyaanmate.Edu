@@ -3,6 +3,8 @@ import multer from 'multer';
 const IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 const VIDEO_TYPES = ['video/mp4', 'video/quicktime', 'video/x-matroska'];
 const PDF_TYPES = ['application/pdf'];
+export const NOTES_FILE_LIMIT_MB = 100;
+export const CONVERTER_FILE_LIMIT_MB = 100;
 
 export const courseUpload = multer({
   storage: multer.memoryStorage(),
@@ -40,7 +42,7 @@ export const courseUpload = multer({
 export const notesUpload = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 50 * 1024 * 1024,
+    fileSize: NOTES_FILE_LIMIT_MB * 1024 * 1024,
   },
   fileFilter: (req, file, cb) => {
     if (file.fieldname === 'file') {
@@ -60,7 +62,23 @@ export const notesUpload = multer({
 }).fields([
   { name: 'file', maxCount: 1 },
   { name: 'thumbnail', maxCount: 1 },
-]);
+]); 
+
+export const converterUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: CONVERTER_FILE_LIMIT_MB * 1024 * 1024,
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.fieldname !== 'file') {
+      return cb(new Error('Unexpected upload field'));
+    }
+    if (!IMAGE_TYPES.includes(file.mimetype) && !PDF_TYPES.includes(file.mimetype)) {
+      return cb(new Error('File must be a PDF, JPG, PNG, or WEBP'));
+    }
+    cb(null, true);
+  },
+}).single('file');
 
 export function validateUploadSizes(req, res, next) {
   const thumb = req.files?.thumbnail?.[0];

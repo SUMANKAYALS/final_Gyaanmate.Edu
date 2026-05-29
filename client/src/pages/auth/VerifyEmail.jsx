@@ -98,6 +98,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '../../store/authStore';
+import { BRAND_LOGO_URL, BRAND_NAME } from '../../config/brand';
 
 export default function VerifyEmail() {
   const [searchParams] = useSearchParams();
@@ -157,11 +158,11 @@ export default function VerifyEmail() {
           {/* Logo */}
           <div className="flex items-center gap-2 mb-8">
             <img
-              src="https://res.cloudinary.com/de8ntd31m/image/upload/v1779644841/WhatsApp_Image_2026-05-24_at_11.10.05_PM_s64mny.jpg"
-              alt="Gyaanmate"
+              src={BRAND_LOGO_URL}
+              alt={`${BRAND_NAME} logo`}
               className="h-9 w-9 rounded-full object-cover"
             />
-            <span className="text-lg font-semibold text-blue-600 tracking-tight">Gyaanmate</span>
+            <span className="text-lg font-semibold text-blue-600 tracking-tight">{BRAND_NAME}</span>
           </div>
 
           {/* Heading */}

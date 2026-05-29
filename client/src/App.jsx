@@ -35,7 +35,6 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import StudyMaterial from './pages/StudyMaterial';
 import Bookmarks from './pages/Bookmarks';
-import GuestOnlyRoute from './components/GuestOnlyRoute';
 import NoteConverter from './pages/features/NoteConverter';
 import CareerRoadmap from './pages/features/CareerRoadmap';
 import VideoCuration from './pages/features/VideoCuration';
@@ -101,11 +100,13 @@ export default function App() {
             <Route path="/my-courses" element={<ProtectedRoute><MyCourses /></ProtectedRoute>} />
             <Route path="/community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
             <Route path="/notes" element={<NotesList variant="notes" />} />
+            <Route path="/notes/ai-converter" element={<NoteConverter />} />
             <Route path="/study-material" element={<StudyMaterial />} />
             <Route path="/bookmarks" element={<ProtectedRoute><Bookmarks /></ProtectedRoute>} />
             <Route path="/mock-tests" element={<MockTestGenerator />} />
-            <Route path="/feature/note-converter" element={<GuestOnlyRoute><NoteConverter /></GuestOnlyRoute>} />
+            <Route path="/feature/note-converter" element={<NoteConverter />} />
             <Route path="/feature/career-roadmap" element={<CareerRoadmap />} />
+            <Route path="/feature/mock-interview" element={<VideoCuration />} />
             <Route path="/feature/video-curation" element={<VideoCuration />} />
             <Route path="/feature/focus-assistance" element={<FocusAssistance />} />
             <Route path="/feature/streaks" element={<GamifiedStreaks />} />
