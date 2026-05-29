@@ -41,7 +41,7 @@ import {
 } from '../controllers/notesController.js';
 
 import { protect } from '../middleware/auth.js';
-import { notesUpload } from '../middleware/upload.js';
+import { NOTES_FILE_LIMIT_MB, notesUpload } from '../middleware/upload.js';
 
 const router = Router();
 
@@ -56,23 +56,16 @@ router.post(
   protect,
 
   (req, res, next) => {
-    console.log('NOTES ROUTE HIT');
-
-    next();
-  },
-
-  (req, res, next) => {
     notesUpload(req, res, (err) => {
       if (err) {
-        console.log('MULTER ERROR:', err);
-
-        return res.status(400).json({
+        return res.status(err.code === 'LIMIT_FILE_SIZE' ? 413 : 400).json({
           success: false,
-          message: err.message,
+          message:
+            err.code === 'LIMIT_FILE_SIZE'
+              ? `File must be ${NOTES_FILE_LIMIT_MB}MB or smaller`
+              : err.message,
         });
       }
-
-      console.log('MULTER SUCCESS');
 
       next();
     });

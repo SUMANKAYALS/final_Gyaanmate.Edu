@@ -1,5 +1,11 @@
 import { searchCoursesWithAI } from '../services/aiSearchService.js';
 import { chatWithGemini, chatBotWithGemini, isGeminiConfigured } from '../services/geminiService.js';
+import {
+  createTextPdfBuffer,
+  extractTextFromFile,
+  getTextPdfFileName,
+} from '../services/ocrPdfService.js';
+import { generateMockTestQuestions } from '../services/mockTestService.js';
 
 export const aiSearch = async (req, res) => {
   const { query } = req.body;
@@ -99,9 +105,56 @@ export const botChat = async (req, res) => {
   });
 };
 
+export const generateMockTest = async (req, res) => {
+  const { topic, difficulty, count } = req.body;
+  if (!topic?.trim()) {
+    return res.status(400).json({ message: 'Topic is required' });
+  }
+
+  const result = await generateMockTestQuestions({
+    topic: topic.trim(),
+    difficulty,
+    count,
+  });
+
+  res.json(result);
+};
+
 export const aiStatus = async (_req, res) => {
   res.json({
     gemini: isGeminiConfigured(),
+    ocr: true,
+    ocrProvider: process.env.OCR_SPACE_API_KEY ? 'tesseract+ocrspace' : 'tesseract+ocrspace-demo',
     model: process.env.GEMINI_MODEL || 'gemini-2.0-flash',
   });
+};
+
+export const convertToTextPdf = async (req, res) => {
+  try {
+    const file = req.file;
+    if (!file) {
+      return res.status(400).json({ message: 'File is required' });
+    }
+
+    const text = await extractTextFromFile(file);
+    const pdf = await createTextPdfBuffer({
+      text,
+      sourceName: file.originalname,
+    });
+    const fileName = getTextPdfFileName(file.originalname);
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Length', pdf.length);
+    res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+    res.send(pdf);
+  } catch (err) {
+    if (err.status && err.status < 500) {
+      console.warn('OCR PDF conversion warning:', err.message);
+    } else {
+      console.error('OCR PDF conversion error:', err);
+    }
+    res.status(err.status || 500).json({
+      message: err.message || 'Failed to convert file',
+    });
+  }
 };

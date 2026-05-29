@@ -93,6 +93,11 @@ export const aiAPI = {
   search: (query) => api.post('/ai/search', { query }),
   chat: (messages) => api.post('/ai/chat', { messages }),
   bot: (messages) => api.post('/ai/bot', { messages }),
+  mockTest: (data) => api.post('/ai/mock-test', data),
+  convertTextPdf: (formData) =>
+    api.post('/ai/convert-text-pdf', formData, {
+      responseType: 'blob',
+    }),
   status: () => api.get('/ai/status'),
 };
 

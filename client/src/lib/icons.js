@@ -38,6 +38,7 @@ export {
   TrendingUp,
   Award,
   Video,
+  Volume2,
   Filter,
   Loader2,
   Facebook,

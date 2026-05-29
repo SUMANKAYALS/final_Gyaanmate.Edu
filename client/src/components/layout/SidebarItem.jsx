@@ -13,7 +13,7 @@ export default function SidebarItem({
   const base =
     'gyaan-sidebar-item group relative flex items-center rounded-lg transition-all duration-200';
   const layout = expanded
-    ? 'gap-3 mx-2 px-3 py-2.5 justify-start'
+    ? 'gap-3 mx-2 w-[calc(100%-1rem)] px-3 py-2.5 justify-start'
     : 'mx-auto w-11 h-11 justify-center';
   const state = active
     ? expanded
@@ -23,7 +23,7 @@ export default function SidebarItem({
 
   const content = (
     <>
-      <span className={`shrink-0 flex items-center justify-center ${active ? 'text-violet-300' : ''}`}>
+      <span className="shrink-0 flex w-5 items-center justify-center">
         {icon}
       </span>
       {expanded && (
@@ -31,7 +31,7 @@ export default function SidebarItem({
           initial={{ opacity: 0, x: -6 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.15 }}
-          className="text-sm font-medium truncate text-inherit"
+          className="min-w-0 text-sm font-medium truncate text-inherit"
         >
           {label}
         </motion.span>
@@ -44,7 +44,7 @@ export default function SidebarItem({
 
   if (asButton) {
     return (
-      <button type="button" onClick={onClick} title={expanded ? undefined : label} className={`${base} ${layout} ${state} w-full`}>
+      <button type="button" onClick={onClick} title={expanded ? undefined : label} className={`${base} ${layout} ${state}`}>
         {content}
       </button>
     );

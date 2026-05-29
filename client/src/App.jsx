@@ -106,6 +106,7 @@ export default function App() {
             <Route path="/mock-tests" element={<MockTestGenerator />} />
             <Route path="/feature/note-converter" element={<NoteConverter />} />
             <Route path="/feature/career-roadmap" element={<CareerRoadmap />} />
+            <Route path="/feature/mock-interview" element={<VideoCuration />} />
             <Route path="/feature/video-curation" element={<VideoCuration />} />
             <Route path="/feature/focus-assistance" element={<FocusAssistance />} />
             <Route path="/feature/streaks" element={<GamifiedStreaks />} />

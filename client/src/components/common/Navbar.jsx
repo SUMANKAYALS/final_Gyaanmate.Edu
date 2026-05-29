@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { GraduationCap, ShoppingCart, User, Menu, X, LineChart, ChevronDown, Sparkles, FileText } from '../../lib/icons';
+import { ShoppingCart, User, Menu, X, LineChart, ChevronDown, Sparkles, FileText } from '../../lib/icons';
 import { useAuthStore } from '../../store/authStore';
 import { getInitials } from '../../utils/avatar';
 import { useEnrollment } from '../../context/EnrollmentContext';
 import { categoryAPI } from '../../services/api';
 import CourseSearchBar from '../search/CourseSearchBar';
+import { BRAND_LOGO_URL, BRAND_NAME } from '../../config/brand';
 export default function Navbar({ onCartClick }) {
   const { user, logout } = useAuthStore();
   const { enrollmentCart } = useEnrollment();
@@ -42,8 +43,12 @@ export default function Navbar({ onCartClick }) {
         >
           <div className="flex justify-between items-center gap-3">
           <Link to="/" className="flex items-center gap-2 text-xl font-bold shrink-0">
-            <GraduationCap className="text-indigo-400 text-2xl" />
-            <span className="gradient-text">Gyaanmate</span>
+            <img
+              src={BRAND_LOGO_URL}
+              alt={`${BRAND_NAME} logo`}
+              className="w-9 h-9 rounded-full object-cover ring-1 ring-indigo-400/30"
+            />
+            <span className="gradient-text">{BRAND_NAME}</span>
           </Link>
 
           <div className="flex items-center gap-2 lg:hidden">

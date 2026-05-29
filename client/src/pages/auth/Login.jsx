@@ -148,9 +148,7 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useAuthStore } from '../../store/authStore';
 import { useTheme } from '../../context/ThemeContext';
 import { Sun, Moon } from '../../lib/icons';
-
-const LOGO_URL =
-  'https://res.cloudinary.com/de8ntd31m/image/upload/v1779644841/WhatsApp_Image_2026-05-24_at_11.10.05_PM_s64mny.jpg';
+import { BRAND_LOGO_URL, BRAND_NAME } from '../../config/brand';
 
 export default function Login() {
   const [email, setEmail]               = useState('');
@@ -576,11 +574,11 @@ export default function Login() {
             {/* Logo + Brand */}
             <div className="gm-logo-row">
               <img
-                src={LOGO_URL}
-                alt="Gyaanmate logo"
+                src={BRAND_LOGO_URL}
+                alt={`${BRAND_NAME} logo`}
                 className="gm-logo-img"
               />
-              <span className="gm-brand">Gyaanmate</span>
+              <span className="gm-brand">{BRAND_NAME}</span>
             </div>
 
             <h1 className="gm-heading">Welcome Back!</h1>

@@ -1,7 +1,8 @@
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { GraduationCap, Home } from '../lib/icons';
+import { Home } from '../lib/icons';
 import { pageVariants, sidebarVariants } from '../animations/motionVariants';
+import { BRAND_LOGO_URL, BRAND_NAME } from '../config/brand';
 
 export default function DashboardLayout({ title, links }) {
   const location = useLocation();
@@ -15,10 +16,12 @@ export default function DashboardLayout({ title, links }) {
         className="w-64 glass border-r border-violet-500/20 p-4 hidden md:block"
       >
         <Link to="/" className="flex items-center gap-2 mb-8 text-lg font-bold">
-          <div className="p-1.5 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600">
-            <GraduationCap className="text-white" size={20} />
-          </div>
-          <span className="gradient-text">GyaanMate</span>
+          <img
+            src={BRAND_LOGO_URL}
+            alt={`${BRAND_NAME} logo`}
+            className="w-9 h-9 rounded-full object-cover ring-1 ring-violet-400/30"
+          />
+          <span className="gradient-text">{BRAND_NAME}</span>
         </Link>
         <p className="text-xs text-slate-500 uppercase tracking-wider mb-4">{title}</p>
         <nav className="space-y-1">

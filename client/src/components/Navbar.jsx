@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { FaShoppingCart, FaUser, FaSignOutAlt, FaChevronDown, FaBars, FaTimes, FaBook } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import { useEnrollment } from '../context/EnrollmentContext';
+import { BRAND_LOGO_URL, BRAND_NAME } from '../config/brand';
 
 const Navbar = ({ onCartClick }) => {
   const { isAuthenticated, logout, user } = useAuth();
@@ -69,8 +70,12 @@ const Navbar = ({ onCartClick }) => {
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <Link to="/" className="flex items-center text-2xl font-bold text-blue-600">
-                <FaBook className="h-8 w-8 mr-2" />
-                <span className="hidden sm:block">EDULEARN</span>
+                <img
+                  src={BRAND_LOGO_URL}
+                  alt={`${BRAND_NAME} logo`}
+                  className="h-9 w-9 mr-2 rounded-full object-cover"
+                />
+                <span className="hidden sm:block">{BRAND_NAME}</span>
               </Link>
             </div>
             
@@ -189,7 +194,7 @@ const Navbar = ({ onCartClick }) => {
                   ) : (
                     <>
                       <div className="px-4 py-3 border-b border-gray-100">
-                        <p className="text-sm font-medium text-gray-900">Welcome to EDULEARN</p>
+                        <p className="text-sm font-medium text-gray-900">Welcome to {BRAND_NAME}</p>
                         <p className="text-xs text-gray-500">Sign in to access your courses</p>
                       </div>
                       <Link
@@ -226,8 +231,12 @@ const Navbar = ({ onCartClick }) => {
       >
         <div className="h-16 flex items-center justify-between px-4 border-b border-gray-200">
           <Link to="/" className="flex items-center text-2xl font-bold text-blue-600" onClick={() => setIsMobileMenuOpen(false)}>
-            <FaBook className="h-8 w-8 mr-2" />
-            <span>EDULEARN</span>
+            <img
+              src={BRAND_LOGO_URL}
+              alt={`${BRAND_NAME} logo`}
+              className="h-9 w-9 mr-2 rounded-full object-cover"
+            />
+            <span>{BRAND_NAME}</span>
           </Link>
           <button
             onClick={toggleMobileMenu}
