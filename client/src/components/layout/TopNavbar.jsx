@@ -9,7 +9,6 @@ import {
   ShoppingCart,
   User,
   LineChart,
-  GraduationCap,
   PanelLeftOpen,
   PanelLeftClose,
 } from '../../lib/icons';
@@ -18,6 +17,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { useEnrollment } from '../../context/EnrollmentContext';
 import { getInitials } from '../../utils/avatar';
 import CourseSearchBar from '../search/CourseSearchBar';
+import { BRAND_LOGO_URL, BRAND_NAME } from '../../config/brand';
 
 export default function TopNavbar({
   onMenuClick,
@@ -73,17 +73,23 @@ export default function TopNavbar({
           </button>
           {!desktopSidebarOpen && (
             <Link to="/" className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-white/5">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center">
-                <GraduationCap className="text-white" size={18} />
-              </div>
-              <span className="font-bold gradient-text text-sm">GyaanMate</span>
+              <img
+                src={BRAND_LOGO_URL}
+                alt={`${BRAND_NAME} logo`}
+                className="w-8 h-8 rounded-full object-cover ring-1 ring-violet-400/30"
+              />
+              <span className="font-bold gradient-text text-sm">{BRAND_NAME}</span>
             </Link>
           )}
         </div>
 
         <Link to="/" className="lg:hidden flex items-center gap-2 shrink-0">
-          <GraduationCap className="text-violet-400" size={22} />
-          <span className="font-bold gradient-text text-sm">GyaanMate</span>
+          <img
+            src={BRAND_LOGO_URL}
+            alt={`${BRAND_NAME} logo`}
+            className="w-8 h-8 rounded-full object-cover ring-1 ring-violet-400/30"
+          />
+          <span className="font-bold gradient-text text-sm">{BRAND_NAME}</span>
         </Link>
 
         <div className="flex-1 max-w-2xl mx-auto hidden sm:block">
