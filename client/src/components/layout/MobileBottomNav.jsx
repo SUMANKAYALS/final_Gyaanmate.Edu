@@ -13,7 +13,7 @@ export default function MobileBottomNav() {
 
   return (
     <nav className="lg:hidden fixed bottom-4 left-4 right-4 z-30">
-      <div className="glass rounded-2xl border border-white/15 px-2 py-2 flex justify-around shadow-2xl shadow-black/30">
+      <div className="gyaan-mobile-nav glass rounded-2xl border border-white/15 px-2 py-2 flex justify-around shadow-2xl shadow-black/30">
         {mobileNavLinks.map((item) => {
           const active = isActive(item);
           return (

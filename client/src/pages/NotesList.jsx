@@ -296,6 +296,7 @@
 // ===============================
 
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 
@@ -312,6 +313,7 @@ import {
   List,
   Bookmark,
   Eye,
+  Sparkles,
 } from '../lib/icons';
 
 import axios from 'axios';
@@ -744,7 +746,7 @@ export default function NotesList({ variant = 'notes' }) {
   const recentNotes = [...notes].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 4);
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="notes-library-page max-w-7xl mx-auto">
 
       <div className="mb-8">
 
@@ -755,13 +757,22 @@ export default function NotesList({ variant = 'notes' }) {
             <p className="text-slate-400 mt-1 text-sm">{meta.subtitle}</p>
           </div>
 
-          <a
-            href="/notes/upload"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-medium transition hover:opacity-90"
-          >
-            <Upload size={18} />
-            Upload Notes
-          </a>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              to="/notes/ai-converter"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-violet-500/40 text-violet-300 font-medium transition hover:bg-violet-500/10"
+            >
+              <Sparkles size={18} />
+              AI Note Converter
+            </Link>
+            <Link
+              to="/notes/upload"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-medium transition hover:opacity-90"
+            >
+              <Upload size={18} />
+              Upload Notes
+            </Link>
+          </div>
         </div>
 
         {recentNotes.length > 0 && !search && !category && (

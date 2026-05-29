@@ -227,7 +227,7 @@ export default function ChatBot() {
             exit={{ scale: 0, opacity: 0 }}
             whileHover={{ scale: 1.08 }}
             style={fabStyle}
-            className="fixed z-50 w-14 h-14 rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 text-white shadow-xl ai-glow flex items-center justify-center border border-violet-400/40 touch-none select-none"
+            className="fixed z-50 w-14 h-14 rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 text-white shadow-xl ai-glow flex items-center justify-center border border-violet-400/40 touch-none select-none cursor-pointer"
             aria-label="Open AI assistant — drag to move"
             onMouseDown={(e) => onDragStart(e, true)}
             onTouchStart={(e) => onDragStart(e, true)}
@@ -246,10 +246,10 @@ export default function ChatBot() {
             exit={{ opacity: 0, y: 24, scale: 0.95 }}
             transition={{ type: 'spring', stiffness: 380, damping: 28 }}
             style={maximized ? {} : panelStyle}
-            className={`${panelSize} flex flex-col rounded-2xl border border-violet-500/30 bg-slate-900/95 backdrop-blur-xl shadow-2xl overflow-hidden ${minimized ? '!h-auto max-h-16' : ''}`}
+            className={`gyaan-chat-panel ${panelSize} flex flex-col rounded-2xl border border-violet-500/30 bg-slate-900/95 backdrop-blur-xl shadow-2xl overflow-hidden ${minimized ? '!h-auto max-h-16' : ''}`}
           >
             <div
-              className="flex items-center justify-between px-4 py-3 border-b border-slate-700/60 bg-gradient-to-r from-violet-900/50 to-slate-900/80 cursor-grab active:cursor-grabbing touch-none select-none"
+              className="gyaan-chat-header flex items-center justify-between px-4 py-3 border-b border-slate-700/60 bg-gradient-to-r from-violet-900/50 to-slate-900/80 cursor-grab active:cursor-grabbing touch-none select-none"
               onMouseDown={(e) => !maximized && onDragStart(e)}
               onTouchStart={(e) => !maximized && onDragStart(e)}
             >
@@ -264,16 +264,16 @@ export default function ChatBot() {
                 </div>
               </div>
               <div className="flex items-center gap-1">
-                <button type="button" onClick={newChat} className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800" title="New chat">
+                <button type="button" onClick={newChat} className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer" title="New chat">
                   <Plus size={16} />
                 </button>
-                <button type="button" onClick={() => setMinimized(!minimized)} className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800">
+                <button type="button" onClick={() => setMinimized(!minimized)} className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer">
                   <Minimize2 size={16} />
                 </button>
-                <button type="button" onClick={() => setMaximized(!maximized)} className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 hidden sm:block">
+                <button type="button" onClick={() => setMaximized(!maximized)} className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 hidden sm:block cursor-pointer">
                   <Maximize2 size={16} />
                 </button>
-                <button type="button" onClick={closeChat} className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800">
+                <button type="button" onClick={closeChat} className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer">
                   <X size={18} />
                 </button>
               </div>
@@ -282,11 +282,11 @@ export default function ChatBot() {
             {!minimized && (
               <div className="flex flex-1 min-h-0">
                 {showHistory && (
-                  <aside className="hidden sm:flex flex-col w-52 border-r border-slate-700/50 bg-slate-950/60 shrink-0">
+                  <aside className="gyaan-chat-sidebar hidden sm:flex flex-col w-52 border-r border-slate-700/50 bg-slate-950/60 shrink-0">
                     <button
                       type="button"
                       onClick={newChat}
-                      className="m-3 py-2 rounded-xl border border-violet-500/40 text-violet-300 text-sm font-medium hover:bg-violet-500/10 transition"
+                      className="gyaan-chat-new-session m-3 py-2 rounded-xl border border-violet-500/40 text-violet-300 text-sm font-medium hover:bg-violet-500/10 transition cursor-pointer"
                     >
                       + New Chat
                     </button>
@@ -297,8 +297,8 @@ export default function ChatBot() {
                           key={s.id}
                           type="button"
                           onClick={() => loadChat(s)}
-                          className={`w-full text-left px-3 py-2 rounded-lg text-xs truncate transition ${
-                            activeSessionId === s.id ? 'bg-violet-600/25 text-violet-200' : 'text-slate-400 hover:bg-slate-800'
+                          className={`gyaan-chat-recent-item w-full text-left px-3 py-2 rounded-lg text-xs truncate transition cursor-pointer ${
+                            activeSessionId === s.id ? 'gyaan-chat-recent-item-active bg-violet-600/25 text-violet-200' : 'text-slate-400 hover:bg-slate-800'
                           }`}
                         >
                           {s.title}
@@ -309,7 +309,7 @@ export default function ChatBot() {
                 )}
 
                 <div className="flex-1 flex flex-col min-w-0">
-                  <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-950/40">
+                  <div className="gyaan-chat-body flex-1 overflow-y-auto p-4 space-y-3 bg-slate-950/40">
                     {messages.map((msg, i) => (
                       <motion.div
                         key={i}
@@ -321,8 +321,8 @@ export default function ChatBot() {
                         <div
                           className={`max-w-[88%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
                             msg.role === 'user'
-                              ? 'bg-gradient-to-br from-violet-600 to-indigo-600 text-white rounded-br-md'
-                              : 'bg-slate-800/90 text-slate-200 border border-slate-700/50 rounded-bl-md'
+                              ? 'gyaan-chat-user-bubble bg-gradient-to-br from-violet-600 to-indigo-600 text-white rounded-br-md'
+                              : 'gyaan-chat-ai-bubble bg-slate-800/90 text-slate-200 border border-slate-700/50 rounded-bl-md'
                           }`}
                         >
                           <p className="whitespace-pre-wrap">{msg.content}</p>
@@ -333,7 +333,7 @@ export default function ChatBot() {
                                   key={c._id}
                                   type="button"
                                   onClick={() => { navigate(`/course/${c._id}`); closeChat(); }}
-                                  className="flex gap-2 w-full text-left p-2 rounded-lg bg-slate-900/70 hover:bg-violet-500/15 border border-slate-700/50 transition"
+                                  className="flex gap-2 w-full text-left p-2 rounded-lg bg-slate-900/70 hover:bg-violet-500/15 border border-slate-700/50 transition cursor-pointer"
                                 >
                                   <img src={c.image} alt="" className="w-12 h-9 rounded object-cover shrink-0" />
                                   <p className="text-xs font-medium text-violet-300 line-clamp-2">{c.title}</p>
@@ -354,7 +354,7 @@ export default function ChatBot() {
                     <div ref={bottomRef} />
                   </div>
 
-                  <div className="p-3 border-t border-slate-700/60 bg-slate-900/80">
+                  <div className="gyaan-chat-input-wrap p-3 border-t border-slate-700/60 bg-slate-900/80">
                     <div className="flex flex-wrap gap-1.5 mb-2 max-h-14 overflow-y-auto">
                       {QUICK_PROMPTS.map((p) => (
                         <button
@@ -362,7 +362,7 @@ export default function ChatBot() {
                           type="button"
                           onClick={() => sendMessage(p)}
                           disabled={loading}
-                          className="text-[10px] px-2 py-1 rounded-full bg-slate-800 text-slate-400 hover:bg-violet-500/20 hover:text-violet-300 transition disabled:opacity-50"
+                          className="text-[10px] px-2 py-1 rounded-full bg-slate-800 text-slate-400 hover:bg-violet-500/20 hover:text-violet-300 transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                         >
                           {p}
                         </button>
@@ -372,7 +372,7 @@ export default function ChatBot() {
                       onSubmit={(e) => { e.preventDefault(); sendMessage(); }}
                       className="flex gap-2 items-end"
                     >
-                      <button type="button" className="p-2.5 text-slate-500 hover:text-violet-400 transition shrink-0">
+                      <button type="button" className="p-2.5 text-slate-500 hover:text-violet-400 transition shrink-0 cursor-pointer">
                         <Paperclip size={18} />
                       </button>
                       <input
@@ -383,14 +383,14 @@ export default function ChatBot() {
                         disabled={loading}
                         className="flex-1 px-4 py-2.5 rounded-2xl bg-slate-800 border border-slate-600/60 text-white text-sm placeholder:text-slate-500 focus:outline-none focus:border-violet-500"
                       />
-                      <button type="button" className="p-2.5 text-slate-500 hover:text-violet-400 transition shrink-0 hidden sm:block">
+                      <button type="button" className="p-2.5 text-slate-500 hover:text-violet-400 transition shrink-0 hidden sm:block cursor-pointer">
                         <Mic size={18} />
                       </button>
                       <motion.button
                         type="submit"
                         disabled={loading || !input.trim()}
                         whileTap={{ scale: 0.92 }}
-                        className="p-2.5 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 text-white disabled:opacity-40 shrink-0"
+                        className="p-2.5 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 text-white disabled:opacity-40 disabled:cursor-not-allowed shrink-0 cursor-pointer"
                       >
                         <Send size={18} />
                       </motion.button>
