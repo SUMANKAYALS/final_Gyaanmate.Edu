@@ -17,6 +17,7 @@ import {
   Users,
 } from '../../lib/icons';
 import { getMediaUrl } from '../../utils/media';
+import { formatCurrency } from '../../utils/currency';
 
 const DEFAULT_FORM = {
   goal: 'Become a full-stack web developer',
@@ -39,10 +40,6 @@ const CATEGORIES = [
 ];
 
 const LEVELS = ['', 'Beginner', 'Intermediate', 'Advanced', 'All Levels'];
-
-function currency(value) {
-  return `$${Number(value || 0).toFixed(2)}`;
-}
 
 function RecommendationCourse({ course, isDark }) {
   return (
@@ -69,7 +66,7 @@ function RecommendationCourse({ course, isDark }) {
               </p>
             </div>
             <div className="text-right">
-              <p className={`text-xl font-bold ${isDark ? 'text-emerald-300' : 'text-emerald-700'}`}>{currency(course.price)}</p>
+              <p className={`text-xl font-bold ${isDark ? 'text-emerald-300' : 'text-emerald-700'}`}>{formatCurrency(course.price)}</p>
               <p className={`text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{course.recommendationScore}% fit score</p>
             </div>
           </div>

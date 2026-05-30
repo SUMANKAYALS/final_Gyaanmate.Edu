@@ -5,6 +5,7 @@ import { getMediaUrl } from '../../utils/media';
 import { cardHover } from '../../animations/motionVariants';
 import { useEnrollment } from '../../context/EnrollmentContext';
 import toast from 'react-hot-toast';
+import { formatCurrency } from '../../utils/currency';
 
 export default function CourseCard({ course, showDiscount = true }) {
   const id = course._id || course.id;
@@ -64,9 +65,9 @@ export default function CourseCard({ course, showDiscount = true }) {
           </div>
           <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-700/50">
             <div className="flex items-baseline gap-2">
-              <span className="text-lg font-bold text-emerald-400">${course.price?.toFixed(2)}</span>
+              <span className="text-lg font-bold text-emerald-400">{formatCurrency(course.price)}</span>
               {hasDiscount && (
-                <span className="text-xs text-slate-500 line-through">${originalPrice.toFixed(2)}</span>
+                <span className="text-xs text-slate-500 line-through">{formatCurrency(originalPrice)}</span>
               )}
             </div>
             <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-700/60 text-slate-300">{course.level}</span>
