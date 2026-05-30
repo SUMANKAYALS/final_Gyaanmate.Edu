@@ -462,6 +462,40 @@ function delay(ms) {
   return new Promise((res) => setTimeout(res, ms));
 }
 
+function parseJsonObject(text) {
+  const clean = String(text || '').replace(/```(?:json)?|```/g, '').trim();
+  const start = clean.indexOf('{');
+  if (start === -1) throw new Error('No JSON object found');
+
+  let depth = 0;
+  let inString = false;
+  let escaped = false;
+
+  for (let i = start; i < clean.length; i += 1) {
+    const ch = clean[i];
+    if (escaped) {
+      escaped = false;
+      continue;
+    }
+    if (ch === '\\') {
+      escaped = true;
+      continue;
+    }
+    if (ch === '"') {
+      inString = !inString;
+      continue;
+    }
+    if (inString) continue;
+    if (ch === '{') depth += 1;
+    if (ch === '}') depth -= 1;
+    if (depth === 0) {
+      return JSON.parse(clean.slice(start, i + 1));
+    }
+  }
+
+  throw new Error('Incomplete JSON object');
+}
+
 async function fetchWithRetry(fn, { maxAttempts = 3 } = {}) {
   let attempt = 0;
   while (true) {
@@ -545,8 +579,7 @@ export async function enhanceSearchWithGemini(query, courses) {
     }));
 
     const text = response.choices[0].message.content;
-    const clean = text.replace(/```(?:json)?|```/g, '').trim();
-    return JSON.parse(clean);
+    return parseJsonObject(text);
   } catch (err) {
     console.error('Groq API error after retries:', err.message);
     return fallbackForSearch(query, courses);
@@ -577,8 +610,7 @@ export async function chatWithGemini(messages, courses = []) {
     }));
 
     const text = response.choices[0].message.content;
-    const clean = text.replace(/```(?:json)?|```/g, '').trim();
-    const parsed = JSON.parse(clean);
+    const parsed = parseJsonObject(text);
     return {
       role: 'assistant', content: parsed.message,
       relatedTopics: parsed.relatedTopics || [], rankedCourseIds: parsed.rankedCourseIds || [],

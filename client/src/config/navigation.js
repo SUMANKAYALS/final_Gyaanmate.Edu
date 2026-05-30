@@ -3,7 +3,7 @@ import {
   FaUpload,
   FaBook,
   FaGraduationCap,
-  FaVideo,
+  FaUserTie,
   FaComments,
   FaBullseye,
   FaClipboardList,
@@ -14,6 +14,7 @@ export const mainNavLinks = [
   { id: 'home', to: '/', label: 'Home', icon: 'Home', end: true },
   { id: 'courses', to: '/browse', label: 'Courses', icon: 'BookOpen' },
   { id: 'ai-search', to: '/ai-search', label: 'AI Search', icon: 'Sparkles' },
+  { id: 'recommendations', to: '/recommendations', label: 'AI Recommender', icon: 'Brain' },
   { id: 'notes', to: '/notes', label: 'Notes', icon: 'FileText' },
   { id: 'my-learning', to: '/my-courses', label: 'My Learning', icon: 'GraduationCap', auth: true },
   { id: 'bookmarks', to: '/bookmarks', label: 'Bookmarks', icon: 'Bookmark', auth: true },
@@ -45,11 +46,12 @@ export const mobileNavLinks = [
 ];
 
 export const featureList = [
-  { title: 'AI Note Converter', icon: FaRobot, path: '/feature/note-converter', description: 'Transform notes into smart summaries with AI.' },
+  { title: 'Image PDF to Text PDF', icon: FaRobot, path: '/feature/note-converter', description: 'Convert scanned notes into searchable text PDFs.' },
   { title: 'Notes Upload', icon: FaUpload, path: '/notes/upload', description: 'Share study materials with the community.', auth: true },
   { title: 'Study Material', icon: FaBook, path: '/study-material', description: 'Browse PDFs and notes from top students.' },
   { title: 'Career Roadmap', icon: FaGraduationCap, path: '/feature/career-roadmap', description: 'Plan your learning path for any career.' },
-  { title: 'Smart Video Curation', icon: FaVideo, path: '/feature/video-curation', description: 'Discover curated video lessons by topic.' },
+  { title: 'AI Course Recommender', icon: FaRobot, path: '/recommendations', description: 'Get personalized courses and study materials from your goals.' },
+  { title: 'AI Mock Interview', icon: FaUserTie, path: '/feature/mock-interview', description: 'Practice interview questions and get AI feedback.' },
   { title: 'Interactive Chat', icon: FaComments, path: '#', action: 'openChat', description: 'Ask GyaanMate AI anything, anytime.' },
   { title: 'Focus Assistance', icon: FaBullseye, path: '/feature/focus-assistance', description: 'Stay on track with personalized focus tools.' },
   { title: 'Mock Test Generator', icon: FaClipboardList, path: '/mock-tests', description: 'Practice with AI-powered mock assessments.' },

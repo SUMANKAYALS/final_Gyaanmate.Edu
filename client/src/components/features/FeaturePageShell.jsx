@@ -12,6 +12,7 @@ export default function FeaturePageShell({
   backTo = '/',
   backLabel = 'Back to home',
   backMode = 'link',
+  wide = false,
 }) {
   const navigate = useNavigate();
   const handleBack = () => {
@@ -23,7 +24,7 @@ export default function FeaturePageShell({
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="feature-page-shell max-w-4xl mx-auto">
+    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className={`feature-page-shell ${wide ? 'max-w-6xl' : 'max-w-4xl'} mx-auto`}>
       {backMode === 'history' ? (
         <button
           type="button"

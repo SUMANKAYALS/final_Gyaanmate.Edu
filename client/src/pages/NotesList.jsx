@@ -763,7 +763,7 @@ export default function NotesList({ variant = 'notes' }) {
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-violet-500/40 text-violet-300 font-medium transition hover:bg-violet-500/10"
             >
               <Sparkles size={18} />
-              AI Note Converter
+              Image PDF to Text PDF
             </Link>
             <Link
               to="/notes/upload"

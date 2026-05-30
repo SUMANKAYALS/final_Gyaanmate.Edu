@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  GraduationCap,
   X,
   ChevronLeft,
   Crown,
@@ -14,6 +13,7 @@ import { mainNavLinks, featureList, infoNavLinks } from '../../config/navigation
 import { useChat } from '../../context/ChatContext';
 import { NavIcon } from './IconMap';
 import SidebarItem from './SidebarItem';
+import { BRAND_LOGO_URL, BRAND_NAME } from '../../config/brand';
 
 const COLLAPSED_WIDTH = 80;
 const EXPANDED_WIDTH = 260;
@@ -93,16 +93,18 @@ export default function Sidebar({
             onClick={() => onMobileClose?.()}
             className={`flex items-center gap-2.5 min-w-0 ${expanded ? '' : 'justify-center'}`}
           >
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center shrink-0 shadow-lg shadow-violet-500/25">
-              <GraduationCap className="text-white" size={20} />
-            </div>
+            <img
+              src={BRAND_LOGO_URL}
+              alt={`${BRAND_NAME} logo`}
+              className="w-9 h-9 rounded-full object-cover shrink-0 shadow-lg shadow-violet-500/25 ring-1 ring-violet-400/30"
+            />
             {expanded && (
               <motion.span
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="font-bold text-white text-base tracking-tight truncate"
+                className="gyaan-sidebar-brand font-bold text-base tracking-tight truncate"
               >
-                GyaanMate
+                {BRAND_NAME}
               </motion.span>
             )}
           </Link>

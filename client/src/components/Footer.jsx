@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import { GraduationCap, Facebook, Twitter, Instagram, Linkedin, Mail } from '../lib/icons';
+import { Facebook, Twitter, Instagram, Linkedin, Mail } from '../lib/icons';
+import { BRAND_LOGO_URL, BRAND_NAME } from '../config/brand';
 
 export default function Footer() {
   return (
@@ -8,10 +9,12 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <div className="p-1.5 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600">
-                <GraduationCap className="text-white" size={18} />
-              </div>
-              <h3 className="text-white text-lg font-semibold">GyaanMate</h3>
+              <img
+                src={BRAND_LOGO_URL}
+                alt={`${BRAND_NAME} logo`}
+                className="w-8 h-8 rounded-full object-cover ring-1 ring-violet-400/30"
+              />
+              <h3 className="text-white text-lg font-semibold">{BRAND_NAME}</h3>
             </div>
             <p className="text-sm leading-relaxed">
               AI-powered learning platform. Master any skill with intelligent discovery powered by Google Gemini.
@@ -50,7 +53,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="border-t border-white/10 mt-8 pt-6 flex flex-wrap justify-between text-sm gap-4">
-          <p>© {new Date().getFullYear()} GyaanMate. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} {BRAND_NAME}. All rights reserved.</p>
           <p className="text-slate-500">Learn Smarter. Achieve More.</p>
         </div>
       </div>

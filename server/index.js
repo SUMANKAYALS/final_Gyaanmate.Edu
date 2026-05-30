@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import { createServer } from 'http';
 import cors from 'cors';
+import multer from 'multer';
 import { connectDB } from './config/db.js';
 import { initCloudinary, isCloudinaryConfigured } from './services/cloudinaryService.js';
 import authRoutes from './routes/authRoutes.js';
@@ -13,6 +14,7 @@ import dashboardRoutes from './routes/dashboardRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
 import communityRoutes from './routes/communityRoutes.js';
 import notesRoutes from './routes/notesRoutes.js';
+import streakRoutes from './routes/streakRoutes.js';
 import { initializeSocket } from './socket.js';
 
 const app = express();
@@ -51,19 +53,30 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/community', communityRoutes);
 app.use('/api/notes', notesRoutes);
+app.use('/api/streak', streakRoutes);
 
 app.use((err, _req, res, _next) => {
+  if (err instanceof multer.MulterError) {
+    const status = err.code === 'LIMIT_FILE_SIZE' ? 413 : 400;
+    const message = err.code === 'LIMIT_FILE_SIZE'
+      ? 'Uploaded file is too large'
+      : err.message;
+    return res.status(status).json({ message });
+  }
   console.error(err);
   res.status(err.status || 500).json({ message: err.message || 'Server error' });
 });
 
-connectDB()
-  .then(() => {
-    initCloudinary();
-    initializeSocket(server);
-    server.listen(PORT, () => console.log(`Gyaanmate API running on port ${PORT}`));
-  })
-  .catch((err) => {
-    console.error('DB connection failed:', err.message);
-    process.exit(1);
-  });
+async function startServer() {
+  initCloudinary();
+  initializeSocket(server);
+  server.listen(PORT, () => console.log(`Gyaanmate API running on port ${PORT}`));
+
+  try {
+    await connectDB();
+  } catch (err) {
+    console.error('DB connection failed. API is still running without database:', err.message);
+  }
+}
+
+startServer();

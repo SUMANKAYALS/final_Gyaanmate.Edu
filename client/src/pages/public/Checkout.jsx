@@ -5,10 +5,15 @@ import toast from 'react-hot-toast';
 import { useEnrollment } from '../../context/EnrollmentContext';
 import { useAuthStore } from '../../store/authStore';
 import { paymentAPI } from '../../services/api';
+import SuggestedCourseRail from '../../components/recommendations/SuggestedCourseRail';
+import { useTheme } from '../../context/ThemeContext';
+import { formatCurrency } from '../../utils/currency';
 
 export default function Checkout() {
   const { enrollmentCart, getCartTotal, clearCart } = useEnrollment();
   const user = useAuthStore((s) => s.user);
+  const { theme } = useTheme();
+  const isLight = theme === 'light';
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
@@ -34,18 +39,18 @@ export default function Checkout() {
   };
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-lg mx-auto px-4 py-12">
-      <h1 className="text-2xl font-bold gradient-text mb-6">Checkout</h1>
-      <div className="glass-card p-6 space-y-4">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mx-auto max-w-5xl px-4 py-12">
+      <h1 className="mb-6 text-2xl font-bold gradient-text">Checkout</h1>
+      <div className={`mx-auto max-w-lg rounded-xl border p-6 shadow-sm ${isLight ? 'border-blue-100 bg-white' : 'border-violet-500/20 bg-slate-900/70'} space-y-4`}>
         {enrollmentCart.map((c) => (
           <motion.div key={c._id || c.id} className="flex justify-between text-sm">
             <span>{c.title}</span>
-            <span className="text-emerald-400">${c.price?.toFixed(2)}</span>
+            <span className="text-emerald-400">{formatCurrency(c.price)}</span>
           </motion.div>
         ))}
         <div className="border-t border-slate-700 pt-4 flex justify-between font-bold text-lg">
           <span>Total</span>
-          <span className="text-emerald-400">${getCartTotal().toFixed(2)}</span>
+          <span className="text-emerald-400">{formatCurrency(getCartTotal())}</span>
         </div>
         <motion.button
           whileTap={{ scale: 0.98 }}
@@ -57,6 +62,17 @@ export default function Checkout() {
         </motion.button>
         <p className="text-xs text-slate-500 text-center">Receipt will be available in your dashboard</p>
       </div>
+      {enrollmentCart.length > 0 && (
+        <div className="mt-8">
+          <SuggestedCourseRail
+            cartCourses={enrollmentCart}
+            title="Recommended add-ons"
+            subtitle="People who buy courses like these often add one more skill"
+            compact={false}
+            limit={4}
+          />
+        </div>
+      )}
     </motion.div>
   );
 }

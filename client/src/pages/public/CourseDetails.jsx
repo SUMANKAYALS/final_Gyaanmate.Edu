@@ -7,6 +7,8 @@ import { getMediaUrl, isDirectVideoUrl } from '../../utils/media';
 import { useEnrollment } from '../../context/EnrollmentContext';
 import { useAuthStore } from '../../store/authStore';
 import { useTheme } from '../../context/ThemeContext';
+import SuggestedCourseRail from '../../components/recommendations/SuggestedCourseRail';
+import { formatCurrency } from '../../utils/currency';
 
 export default function CourseDetails() {
   const { id } = useParams();
@@ -259,8 +261,8 @@ export default function CourseDetails() {
           whileHover={{ scale: 1.01 }}
           className={`glass-card p-6 h-fit sticky top-24 ${isLight ? 'border border-blue-100 rounded-3xl shadow-xl shadow-blue-100/70' : 'border border-violet-500/20'}`}
         >
-          <p className="text-4xl font-bold text-emerald-500 mb-1">${course.price?.toFixed(2)}</p>
-          <p className={`text-sm line-through mb-4 ${isLight ? 'text-gray-400' : 'text-slate-500'}`}>${((course.price || 0) * 1.35).toFixed(2)}</p>
+          <p className="text-4xl font-bold text-emerald-500 mb-1">{formatCurrency(course.price)}</p>
+          <p className={`text-sm line-through mb-4 ${isLight ? 'text-gray-400' : 'text-slate-500'}`}>{formatCurrency((course.price || 0) * 1.35)}</p>
           <div className={`flex items-center gap-3 mb-4 p-3 rounded-xl ${isLight ? 'bg-blue-50 border border-blue-100' : 'bg-slate-800/50'}`}>
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-white font-bold">
               {(course.instructorName || 'I')[0]}
@@ -286,6 +288,13 @@ export default function CourseDetails() {
           )}
         </motion.div>
       </motion.div>
+      <div className="mt-8">
+        <SuggestedCourseRail
+          currentCourse={course}
+          title="Students also buy"
+          subtitle="Suggested courses based on this course"
+        />
+      </div>
     </motion.div>
   );
 }

@@ -193,11 +193,20 @@ html.light .gyaan-sidebar {
   @apply px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500;
 }
 
+.gyaan-sidebar-brand {
+  color: #ffffff;
+}
+
 /* Collapsed: active = left indicator + glow */
 .gyaan-sidebar-item--active-collapsed {
   color: #e9d5ff;
   background: rgba(124, 58, 237, 0.2);
   box-shadow: 0 0 20px rgba(124, 58, 237, 0.25);
+}
+
+.gyaan-sidebar-item--active-collapsed svg,
+.gyaan-sidebar-item--active-expanded svg {
+  color: currentColor;
 }
 
 .gyaan-sidebar-item--active-collapsed::before {
@@ -240,6 +249,21 @@ html.light .gyaan-sidebar {
 .group:hover .gyaan-sidebar-tooltip {
   opacity: 1;
   transform: scale(1);
+}
+
+@keyframes auth-visual-card-wave {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-14px) rotate(0.4deg);
+  }
+}
+
+.auth-visual-card-wave {
+  animation: auth-visual-card-wave 5.5s ease-in-out infinite;
+  transform-origin: center;
 }
 
 /* Light mode refresh (dark mode untouched) */
@@ -325,8 +349,12 @@ html.light .gyaan-sidebar-section-label {
   color: #6b7280;
 }
 
+html.light .gyaan-sidebar-brand {
+  color: #1e293b;
+}
+
 html.light .gyaan-sidebar-item {
-  color: #4b5563;
+  color: #334155;
 }
 
 html.light .gyaan-sidebar-item:hover {
@@ -460,6 +488,15 @@ html.light .text-violet-400 {
 
 html.light .text-violet-300 {
   color: #1d4ed8;
+}
+
+html.light .gyaan-sidebar .gyaan-sidebar-item svg {
+  color: currentColor;
+}
+
+html.light .gyaan-sidebar .gyaan-sidebar-item--active-collapsed svg,
+html.light .gyaan-sidebar .gyaan-sidebar-item--active-expanded svg {
+  color: #ffffff;
 }
 
 html.light .gyaan-mobile-nav {
@@ -928,5 +965,38 @@ html.light .community-chat .bg-slate-700 {
 
 html.light .community-chat button.disabled\:bg-slate-700:disabled {
   background: #cbd5e1;
+  color: #64748b;
+}
+
+/* AI mock interview keeps a deliberate dark video-call surface in light mode. */
+html.light .ai-interview-room section,
+html.light .ai-interview-room section .bg-slate-950,
+html.light .ai-interview-room section .bg-slate-900,
+html.light .ai-interview-room section .bg-slate-900\/50,
+html.light .ai-interview-room section .bg-slate-950\/70 {
+  background-color: #020617;
+}
+
+html.light .ai-interview-room section .text-white,
+html.light .ai-interview-room section .text-slate-100,
+html.light .ai-interview-room section .text-slate-200,
+html.light .ai-interview-room section .text-slate-300 {
+  color: #f8fafc;
+}
+
+html.light .ai-interview-room section .text-slate-400,
+html.light .ai-interview-room section .text-slate-500 {
+  color: #94a3b8;
+}
+
+html.light .ai-interview-settings .bg-slate-950\/70 {
+  background-color: #f1f5f9;
+}
+
+html.light .ai-interview-settings .text-slate-300 {
+  color: #334155;
+}
+
+html.light .ai-interview-settings .text-slate-500 {
   color: #64748b;
 }
