@@ -251,6 +251,21 @@ html.light .gyaan-sidebar {
   transform: scale(1);
 }
 
+@keyframes auth-visual-card-wave {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-14px) rotate(0.4deg);
+  }
+}
+
+.auth-visual-card-wave {
+  animation: auth-visual-card-wave 5.5s ease-in-out infinite;
+  transform-origin: center;
+}
+
 /* Light mode refresh (dark mode untouched) */
 html.light body {
   background: #f8faff;
@@ -339,7 +354,7 @@ html.light .gyaan-sidebar-brand {
 }
 
 html.light .gyaan-sidebar-item {
-  color: #4b5563;
+  color: #334155;
 }
 
 html.light .gyaan-sidebar-item:hover {
@@ -473,6 +488,15 @@ html.light .text-violet-400 {
 
 html.light .text-violet-300 {
   color: #1d4ed8;
+}
+
+html.light .gyaan-sidebar .gyaan-sidebar-item svg {
+  color: currentColor;
+}
+
+html.light .gyaan-sidebar .gyaan-sidebar-item--active-collapsed svg,
+html.light .gyaan-sidebar .gyaan-sidebar-item--active-expanded svg {
+  color: #ffffff;
 }
 
 html.light .gyaan-mobile-nav {
