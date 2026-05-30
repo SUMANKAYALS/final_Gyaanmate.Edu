@@ -20,6 +20,20 @@ const userSchema = new mongoose.Schema(
       totalStudents: { type: Number, default: 0 },
       totalRevenue: { type: Number, default: 0 },
     },
+    // Streak tracking
+    streak: {
+      currentStreak: { type: Number, default: 0 },
+      longestStreak: { type: Number, default: 0 },
+      lastActivityDate: { type: Date, default: null },
+      totalMinutesActive: { type: Number, default: 0 },
+      streakCalendar: [
+        {
+          date: Date,
+          minutesActive: Number,
+          level: { type: Number, enum: [0, 1, 2, 3], default: 0 }, // 0: none, 1: light, 2: medium, 3: high
+        }
+      ],
+    },
   },
   { timestamps: true }
 );

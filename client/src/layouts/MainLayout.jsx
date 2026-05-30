@@ -9,6 +9,7 @@ import LearningCart from '../components/LearningCart';
 import ChatBot from '../components/chat/ChatBot';
 import { ChatProvider } from '../context/ChatContext';
 import { pageVariants } from '../animations/motionVariants';
+import useActivityTracker from '../hooks/useActivityTracker';
 
 const SIDEBAR_STORAGE_KEY = 'gyaanmate-sidebar-desktop';
 
@@ -24,6 +25,7 @@ function readDesktopSidebarExpanded() {
 }
 
 export default function MainLayout() {
+  useActivityTracker();
   const [cartOpen, setCartOpen] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [desktopSidebarExpanded, setDesktopSidebarExpanded] = useState(readDesktopSidebarExpanded);
