@@ -39,7 +39,7 @@ npm run dev
 
 | Role | Email | Password |
 |------|-------|----------|
-| Admin | admin@learnhub.ai | admin123 |
+| Admin | gyaanmate.edu@gmail.com | admin123 |
 | Instructor | instructor1@learnhub.ai | instructor123 |
 
 ## AI Search

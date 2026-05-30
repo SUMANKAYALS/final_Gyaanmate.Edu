@@ -27,6 +27,9 @@ const categories = [
 
 import { courseTemplates } from './courseSeedData.js';
 
+const ADMIN_EMAIL = 'gyaanmate.edu@gmail.com';
+const OLD_ADMIN_EMAIL = 'admin@learnhub.ai';
+
 const images = [
   'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800',
   'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800',
@@ -39,9 +42,10 @@ const images = [
 const demoUsers = [
   {
     name: 'Admin User',
-    email: 'admin@learnhub.ai',
+    email: ADMIN_EMAIL,
     password: 'admin123',
     role: 'admin',
+    emailVerified: true,
   },
   {
     name: 'Sarah Chen',
@@ -84,12 +88,26 @@ const slugify = (value) => value.toLowerCase().replace(/[^a-z0-9]+/g, '-').repla
 
 async function ensureDemoUsers() {
   let created = 0;
+  const oldAdmin = await User.findOne({ email: OLD_ADMIN_EMAIL });
+  const newAdmin = await User.findOne({ email: ADMIN_EMAIL });
+
+  if (oldAdmin && !newAdmin) {
+    oldAdmin.email = ADMIN_EMAIL;
+    oldAdmin.role = 'admin';
+    oldAdmin.emailVerified = true;
+    await oldAdmin.save();
+  }
 
   for (const user of demoUsers) {
     const existing = await User.findOne({ email: user.email });
     if (!existing) {
       await User.create(user);
       created += 1;
+    } else if (user.role === 'admin') {
+      await User.updateOne(
+        { _id: existing._id },
+        { $set: { role: 'admin', emailVerified: true } }
+      );
     }
   }
 
@@ -196,7 +214,7 @@ async function seedDemoData() {
   console.log(`Created users: ${createdUsers}`);
   console.log(`Created categories: ${createdCategories}`);
   console.log(`Created courses: ${createdCourses}`);
-  console.log('Demo accounts: admin@learnhub.ai / admin123 | instructor1@learnhub.ai / instructor123');
+  console.log('Demo accounts: gyaanmate.edu@gmail.com / admin123 | instructor1@learnhub.ai / instructor123');
   await mongoose.disconnect();
 }
 
