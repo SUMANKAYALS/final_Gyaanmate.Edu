@@ -42,6 +42,7 @@ import VideoCuration from './pages/features/VideoCuration';
 import FocusAssistance from './pages/features/FocusAssistance';
 import MockTestGenerator from './pages/features/MockTestGenerator';
 import GamifiedStreaks from './pages/features/GamifiedStreaks';
+import AIRecommendations from './pages/features/AIRecommendations';
 
 const studentLinks = [
   { to: '/student/dashboard', label: 'Overview' },
@@ -79,6 +80,7 @@ export default function App() {
             <Route path="/browse" element={<BrowseCourses />} />
             <Route path="/search" element={<SearchResults />} />
             <Route path="/ai-search" element={<AISearchPage />} />
+            <Route path="/recommendations" element={<AIRecommendations />} />
             <Route path="/ai-search-legacy" element={<LegacyAISearchRedirect />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
@@ -108,6 +110,7 @@ export default function App() {
             <Route path="/mock-tests" element={<MockTestGenerator />} />
             <Route path="/feature/note-converter" element={<NoteConverter />} />
             <Route path="/feature/career-roadmap" element={<CareerRoadmap />} />
+            <Route path="/feature/recommendations" element={<AIRecommendations />} />
             <Route path="/feature/mock-interview" element={<VideoCuration />} />
             <Route path="/feature/video-curation" element={<VideoCuration />} />
             <Route path="/feature/focus-assistance" element={<FocusAssistance />} />

@@ -7,6 +7,7 @@ import { getMediaUrl, isDirectVideoUrl } from '../../utils/media';
 import { useEnrollment } from '../../context/EnrollmentContext';
 import { useAuthStore } from '../../store/authStore';
 import { useTheme } from '../../context/ThemeContext';
+import SuggestedCourseRail from '../../components/recommendations/SuggestedCourseRail';
 
 export default function CourseDetails() {
   const { id } = useParams();
@@ -286,6 +287,13 @@ export default function CourseDetails() {
           )}
         </motion.div>
       </motion.div>
+      <div className="mt-8">
+        <SuggestedCourseRail
+          currentCourse={course}
+          title="Students also buy"
+          subtitle="Suggested courses based on this course"
+        />
+      </div>
     </motion.div>
   );
 }
