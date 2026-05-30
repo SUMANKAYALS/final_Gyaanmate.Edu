@@ -5,6 +5,7 @@ import { aiAPI } from '../../services/api';
 import { useEnrollment } from '../../context/EnrollmentContext';
 import { useTheme } from '../../context/ThemeContext';
 import { getMediaUrl } from '../../utils/media';
+import { formatCurrency } from '../../utils/currency';
 import { Loader2, ShoppingCart, Sparkles, Star, Users } from '../../lib/icons';
 
 export default function SuggestedCourseRail({
@@ -120,7 +121,7 @@ export default function SuggestedCourseRail({
             </Link>
             <div className={`flex items-center justify-between gap-2 border-t p-3 ${isLight ? 'border-slate-200' : 'border-slate-700'}`}>
               <span className={`text-sm font-bold ${isLight ? 'text-emerald-700' : 'text-emerald-300'}`}>
-                ${Number(course.price || 0).toFixed(2)}
+                {formatCurrency(course.price)}
               </span>
               <button
                 type="button"

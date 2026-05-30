@@ -7,6 +7,7 @@ import { useAuthStore } from '../../store/authStore';
 import { paymentAPI } from '../../services/api';
 import SuggestedCourseRail from '../../components/recommendations/SuggestedCourseRail';
 import { useTheme } from '../../context/ThemeContext';
+import { formatCurrency } from '../../utils/currency';
 
 export default function Checkout() {
   const { enrollmentCart, getCartTotal, clearCart } = useEnrollment();
@@ -44,12 +45,12 @@ export default function Checkout() {
         {enrollmentCart.map((c) => (
           <motion.div key={c._id || c.id} className="flex justify-between text-sm">
             <span>{c.title}</span>
-            <span className="text-emerald-400">${c.price?.toFixed(2)}</span>
+            <span className="text-emerald-400">{formatCurrency(c.price)}</span>
           </motion.div>
         ))}
         <div className="border-t border-slate-700 pt-4 flex justify-between font-bold text-lg">
           <span>Total</span>
-          <span className="text-emerald-400">${getCartTotal().toFixed(2)}</span>
+          <span className="text-emerald-400">{formatCurrency(getCartTotal())}</span>
         </div>
         <motion.button
           whileTap={{ scale: 0.98 }}
