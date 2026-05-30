@@ -35,9 +35,10 @@ async function seed() {
 
   await User.create({
     name: 'Admin User',
-    email: 'admin@learnhub.ai',
+    email: 'gyaanmate.edu@gmail.com',
     password: 'admin123',
     role: 'admin',
+    emailVerified: true,
   });
 
   const instructorNames = ['Sarah Chen', 'Michael Torres', 'Emma Wilson', 'James Park', 'Lisa Kumar'];
@@ -105,7 +106,7 @@ async function seed() {
   }
 
   console.log('✅ Seed complete!');
-  console.log('Admin: admin@learnhub.ai / admin123');
+  console.log('Admin: gyaanmate.edu@gmail.com / admin123');
   console.log('Instructor: instructor1@learnhub.ai / instructor123');
   console.log(`Courses: ${courses.length}, Categories: ${categories.length}`);
   process.exit(0);

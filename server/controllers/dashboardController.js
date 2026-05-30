@@ -46,38 +46,134 @@ export const instructorDashboard = async (req, res) => {
 };
 
 export const adminDashboard = async (req, res) => {
-  const [users, courses, enrollments, payments, instructors] = await Promise.all([
+  const now = new Date();
+  const thirtyDaysAgo = new Date(now);
+  thirtyDaysAgo.setDate(now.getDate() - 30);
+  const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 5, 1);
+
+  const [
+    users,
+    courses,
+    enrollments,
+    payments,
+    instructors,
+    students,
+    publishedCourses,
+    draftCourses,
+    newUsers30d,
+    enrollments30d,
+    revenue30d,
+    certificates,
+    averageProgressResult,
+    averageRatingResult,
+    roleStats,
+    paymentStatusStats,
+    levelStats,
+    revenueTrendRaw,
+    totalPayments,
+  ] = await Promise.all([
     User.countDocuments(),
     Course.countDocuments(),
     Enrollment.countDocuments(),
     Payment.aggregate([{ $group: { _id: null, total: { $sum: '$amount' } } }]),
     User.countDocuments({ role: 'instructor' }),
+    User.countDocuments({ role: 'student' }),
+    Course.countDocuments({ isPublished: true }),
+    Course.countDocuments({ isPublished: false }),
+    User.countDocuments({ createdAt: { $gte: thirtyDaysAgo } }),
+    Enrollment.countDocuments({ createdAt: { $gte: thirtyDaysAgo } }),
+    Payment.aggregate([
+      { $match: { createdAt: { $gte: thirtyDaysAgo }, status: 'completed' } },
+      { $group: { _id: null, total: { $sum: '$amount' } } },
+    ]),
+    Enrollment.countDocuments({ certificateIssued: true }),
+    Enrollment.aggregate([{ $group: { _id: null, average: { $avg: '$progressPercentage' } } }]),
+    Course.aggregate([{ $group: { _id: null, average: { $avg: '$rating' } } }]),
+    User.aggregate([{ $group: { _id: '$role', count: { $sum: 1 } } }, { $sort: { count: -1 } }]),
+    Payment.aggregate([{ $group: { _id: '$status', count: { $sum: 1 }, total: { $sum: '$amount' } } }, { $sort: { count: -1 } }]),
+    Course.aggregate([{ $group: { _id: '$level', count: { $sum: 1 } } }, { $sort: { count: -1 } }]),
+    Payment.aggregate([
+      { $match: { createdAt: { $gte: sixMonthsAgo }, status: 'completed' } },
+      {
+        $group: {
+          _id: { $dateToString: { format: '%Y-%m', date: '$createdAt' } },
+          total: { $sum: '$amount' },
+          count: { $sum: 1 },
+        },
+      },
+      { $sort: { _id: 1 } },
+    ]),
+    Payment.countDocuments(),
   ]);
 
-  const topCourses = await Course.find().sort({ students: -1 }).limit(5);
-  const categoryStats = await Course.aggregate([
-    { $group: { _id: '$category', count: { $sum: 1 } } },
-    { $sort: { count: -1 } },
-    { $limit: 10 },
+  const [topCourses, categoryStats, recentUsers, recentPayments, recentEnrollments] = await Promise.all([
+    Course.find()
+      .sort({ students: -1, rating: -1 })
+      .limit(8)
+      .select('title category students rating price isPublished instructorName'),
+    Course.aggregate([
+      { $group: { _id: '$category', count: { $sum: 1 }, students: { $sum: '$students' }, averageRating: { $avg: '$rating' } } },
+      { $sort: { count: -1 } },
+      { $limit: 10 },
+    ]),
+    User.find().sort({ createdAt: -1 }).limit(8).select('name email role emailVerified createdAt'),
+    Payment.find().sort({ createdAt: -1 }).limit(8).populate('student', 'name email').select('student studentName courseName amount status method createdAt'),
+    Enrollment.find()
+      .sort({ createdAt: -1 })
+      .limit(8)
+      .populate('student', 'name email')
+      .populate('course', 'title category')
+      .select('student course progressPercentage certificateIssued createdAt'),
   ]);
-  const recentUsers = await User.find().sort({ createdAt: -1 }).limit(6).select('name email role createdAt');
-  const recentPayments = await Payment.find().sort({ createdAt: -1 }).limit(6).populate('student', 'name email');
+
+  const trendMap = new Map(revenueTrendRaw.map((item) => [item._id, item]));
+  const revenueTrend = Array.from({ length: 6 }, (_, offset) => {
+    const date = new Date(now.getFullYear(), now.getMonth() - 5 + offset, 1);
+    const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+    const item = trendMap.get(key);
+    return {
+      month: date.toLocaleString('en-US', { month: 'short' }),
+      total: item?.total || 0,
+      count: item?.count || 0,
+    };
+  });
+
+  const totalRevenue = payments[0]?.total || 0;
+  const completionRate = enrollments ? Math.round((certificates / enrollments) * 100) : 0;
+  const averageProgress = Math.round(averageProgressResult[0]?.average || 0);
+  const averageRating = Number((averageRatingResult[0]?.average || 0).toFixed(1));
 
   res.json({
     stats: {
       totalUsers: users,
+      totalStudents: students,
       totalCourses: courses,
+      publishedCourses,
+      draftCourses,
       totalEnrollments: enrollments,
-      totalRevenue: payments[0]?.total || 0,
+      totalRevenue,
       totalInstructors: instructors,
+      certificates,
+      completionRate,
+      averageProgress,
+      averageRating,
+      newUsers30d,
+      enrollments30d,
+      revenue30d: revenue30d[0]?.total || 0,
     },
     topCourses,
     categoryStats,
     recentUsers,
     recentPayments,
-    aiAnalytics: {
-      popularSearches: ['React courses', 'AI for beginners', 'Python', 'Cyber Security', 'Data Science'],
-      searchConversionRate: '12.4%',
+    recentEnrollments,
+    roleStats,
+    paymentStatusStats,
+    levelStats,
+    revenueTrend,
+    systemHealth: {
+      publishedCourseRate: courses ? Math.round((publishedCourses / courses) * 100) : 0,
+      paidConversionRate: enrollments ? Math.round((totalPayments / enrollments) * 100) : 0,
+      verifiedUsers: recentUsers.filter((user) => user.emailVerified).length,
     },
   });
 };

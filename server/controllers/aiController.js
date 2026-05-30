@@ -6,6 +6,7 @@ import {
   getTextPdfFileName,
 } from '../services/ocrPdfService.js';
 import { generateMockTestQuestions } from '../services/mockTestService.js';
+import { recommendLearningResources } from '../services/recommendationService.js';
 
 export const aiSearch = async (req, res) => {
   const { query } = req.body;
@@ -118,6 +119,67 @@ export const generateMockTest = async (req, res) => {
   });
 
   res.json(result);
+};
+
+export const aiRecommendations = async (req, res) => {
+  const goal = String(req.body?.goal || '').trim();
+  const interests = req.body?.interests;
+  const hasInterests = Array.isArray(interests)
+    ? interests.some((item) => String(item || '').trim())
+    : String(interests || '').trim();
+
+  if (!goal && !hasInterests) {
+    return res.status(400).json({ message: 'Learning goal or interests are required' });
+  }
+
+  const result = await recommendLearningResources(req.body);
+  res.json(result);
+};
+
+export const aiSuggestedCourses = async (req, res) => {
+  const currentCourse = req.body?.currentCourse || {};
+  const cartCourses = Array.isArray(req.body?.cartCourses) ? req.body.cartCourses : [];
+  const excludeCourseIds = [
+    currentCourse._id || currentCourse.id,
+    ...cartCourses.map((course) => course?._id || course?.id),
+  ]
+    .map(String)
+    .filter(Boolean);
+
+  const cartText = cartCourses
+    .map((course) => [course?.title, course?.category, course?.level, ...(course?.skills || [])].filter(Boolean).join(' '))
+    .join(' ');
+
+  const goal = req.body?.goal || [
+    currentCourse.title,
+    currentCourse.category,
+    currentCourse.level,
+    currentCourse.description,
+    cartText,
+  ]
+    .filter(Boolean)
+    .join(' ');
+
+  const result = await recommendLearningResources({
+    goal,
+    category: req.body?.category || currentCourse.category || '',
+    level: req.body?.level || currentCourse.level || '',
+    interests: req.body?.interests || [
+      ...(currentCourse.tags || []),
+      ...(currentCourse.skills || []),
+      currentCourse.category,
+      cartText,
+    ].filter(Boolean),
+    budget: req.body?.budget,
+    excludeCourseIds,
+  });
+
+  res.json({
+    ...result,
+    message: result.recommendations?.length
+      ? 'Suggested courses you may want to buy next, based on what you are viewing or adding to cart.'
+      : 'No extra course suggestions found right now.',
+  });
 };
 
 export const aiStatus = async (_req, res) => {

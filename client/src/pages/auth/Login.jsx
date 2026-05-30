@@ -130,7 +130,7 @@
 //         </p>
 //         {/* <div className="mt-4 p-3 rounded-lg bg-slate-800/60 border border-slate-700 text-xs text-slate-400 space-y-1 backdrop-blur-sm">
 //           <p className="font-medium text-slate-300">Demo accounts (after seed):</p>
-//           <p>Admin: admin@learnhub.ai / admin123</p>
+//           <p>Admin: gyaanmate.edu@gmail.com / admin123</p>
 //           <p>Instructor: instructor1@learnhub.ai / instructor123</p>
 //           <p className="text-slate-500 pt-1">If login fails, run <code className="text-indigo-300">npm run seed</code> in the project folder, then try again.</p>
 //         </div> */}
