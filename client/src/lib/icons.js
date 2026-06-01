@@ -6,6 +6,7 @@ export {
   GraduationCap,
   ShoppingCart,
   User,
+  Lock,
   Menu,
   X,
   LineChart,

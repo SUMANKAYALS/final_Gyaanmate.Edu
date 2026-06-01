@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate, useSearchParams } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { EnrollmentProvider } from './context/EnrollmentContext';
+import { StreakProvider } from './context/StreakContext';
 import MainLayout from './layouts/MainLayout';
 import DashboardLayout from './layouts/DashboardLayout';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -70,9 +71,10 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthInitializer>
-      <EnrollmentProvider>
-        <Toaster position="top-right" toastOptions={{ style: { background: '#1e293b', color: '#fff' } }} />
-        <Routes>
+        <StreakProvider>
+          <EnrollmentProvider>
+            <Toaster position="top-right" toastOptions={{ style: { background: '#1e293b', color: '#fff' } }} />
+            <Routes>
           <Route element={<MainLayout />}>
             <Route path="/" element={<Home />} />
             <Route path="/browse" element={<BrowseCourses />} />
@@ -137,7 +139,8 @@ export default function App() {
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-      </EnrollmentProvider>
+          </EnrollmentProvider>
+        </StreakProvider>
       </AuthInitializer>
     </BrowserRouter>
   );
