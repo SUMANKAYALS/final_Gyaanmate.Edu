@@ -37,18 +37,32 @@
 
 import nodemailer from 'nodemailer';
 
-const createTransporter = () => nodemailer.createTransport({
-  host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-  port: Number(process.env.EMAIL_PORT) || 587,
-  secure: process.env.EMAIL_SECURE === 'true',
-  connectionTimeout: Number(process.env.EMAIL_CONNECTION_TIMEOUT) || 10000,
-  greetingTimeout: Number(process.env.EMAIL_GREETING_TIMEOUT) || 10000,
-  socketTimeout: Number(process.env.EMAIL_SOCKET_TIMEOUT) || 10000,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+// const createTransporter = () => nodemailer.createTransport({
+//   host: process.env.EMAIL_HOST || 'smtp.gmail.com',
+//   port: Number(process.env.EMAIL_PORT) || 587,
+//   secure: process.env.EMAIL_SECURE === 'true',
+//   connectionTimeout: Number(process.env.EMAIL_CONNECTION_TIMEOUT) || 10000,
+//   greetingTimeout: Number(process.env.EMAIL_GREETING_TIMEOUT) || 10000,
+//   socketTimeout: Number(process.env.EMAIL_SOCKET_TIMEOUT) || 10000,
+//   auth: {
+//     user: process.env.EMAIL_USER,
+//     pass: process.env.EMAIL_PASS,
+//   },
+// });
+
+
+const createTransporter = () =>
+  nodemailer.createTransport({
+    host: process.env.EMAIL_HOST,
+    port: Number(process.env.EMAIL_PORT),
+    secure: process.env.EMAIL_SECURE === 'true',
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+    logger: true,
+    debug: true,
+  });
 
 // const transporter = createTransporter();
 // console.log("EMAIL_USER =", process.env.EMAIL_USER);
@@ -66,6 +80,9 @@ export const sendVerificationEmail = async (to, otp) => {
       'Email transport is not configured. Set EMAIL_USER and EMAIL_PASS in server/.env'
     );
   }
+
+  await transporter.verify();
+  console.log("SMTP connection successful");
 
   await transporter.sendMail({
     from: getFromAddress(),
@@ -221,6 +238,9 @@ export const sendPasswordResetEmail = async (to, otp) => {
     );
   }
 
+  await transporter.verify();
+  console.log("SMTP connection successful");
+
   await transporter.sendMail({
     from: getFromAddress(),
     to,
@@ -277,6 +297,9 @@ export const sendLogoutReloginEmail = async (to, name = 'Learner') => {
   }
 
   const loginUrl = `${process.env.CLIENT_URL || 'http://localhost:5173'}/login`;
+
+  await transporter.verify();
+  console.log("SMTP connection successful");
 
   await transporter.sendMail({
     from: getFromAddress(),
