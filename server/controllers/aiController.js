@@ -7,6 +7,7 @@ import {
 } from '../services/ocrPdfService.js';
 import { generateMockTestQuestions } from '../services/mockTestService.js';
 import { recommendLearningResources } from '../services/recommendationService.js';
+import { analyzeSentiment } from '../services/sentimentService.js';
 
 export const aiSearch = async (req, res) => {
   const { query } = req.body;
@@ -182,6 +183,16 @@ export const aiSuggestedCourses = async (req, res) => {
   });
 };
 
+export const sentimentAnalytics = async (req, res) => {
+  const text = String(req.body?.text || '').trim();
+  if (!text) {
+    return res.status(400).json({ message: 'Text is required' });
+  }
+
+  const result = await analyzeSentiment(text);
+  res.json(result);
+};
+
 export const aiStatus = async (_req, res) => {
   res.json({
     gemini: isGeminiConfigured(),
@@ -217,6 +228,25 @@ export const convertToTextPdf = async (req, res) => {
     }
     res.status(err.status || 500).json({
       message: err.message || 'Failed to convert file',
+    });
+  }
+};
+
+export const extractText = async (req, res) => {
+  try {
+    const file = req.file;
+    if (!file) {
+      return res.status(400).json({ message: 'File is required' });
+    }
+
+    const text = await extractTextFromFile(file);
+    res.json({
+      fileName: file.originalname,
+      text,
+    });
+  } catch (err) {
+    res.status(err.status || 500).json({
+      message: err.message || 'Failed to extract text',
     });
   }
 };

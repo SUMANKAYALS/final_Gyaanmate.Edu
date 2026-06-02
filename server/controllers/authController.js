@@ -1,7 +1,11 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
-import { sendVerificationEmail, sendPasswordResetEmail } from '../services/emailService.js';
+import {
+  sendVerificationEmail,
+  sendPasswordResetEmail,
+  sendLogoutReloginEmail,
+} from '../services/emailService.js';
 
 const signToken = (id) =>
   jwt.sign({ id }, process.env.JWT_SECRET || 'dev_secret', { expiresIn: '30d' });
@@ -193,6 +197,17 @@ export const resetPassword = async (req, res) => {
   await user.save();
 
   res.json({ message: 'Password updated successfully. You can sign in with your new password.' });
+};
+
+export const logout = async (req, res) => {
+  console.log("Logout route called");
+  try {
+    await sendLogoutReloginEmail(req.user.email, req.user.name);
+    res.json({ message: 'Logged out successfully. A login reminder has been sent to your email.' });
+  } catch (error) {
+    console.error('logout email:', error);
+    res.status(500).json({ message: 'Logged out, but unable to send the login email.' });
+  }
 };
 
 export const getMe = async (req, res) => {

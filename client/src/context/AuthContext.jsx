@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
+import { authAPI } from '../services/api';
 
 const AuthContext = createContext(null);
 
@@ -11,7 +12,19 @@ export const AuthProvider = ({ children }) => {
     setIsAuthenticated(true);
   };
 
-  const logout = () => {
+  const logout = async ({ notify = true } = {}) => {
+    const token = localStorage.getItem('learnhub_token');
+    if (notify && token) {
+      try {
+        await authAPI.logout(token);
+      } catch (error) {
+        console.warn('Logout email could not be sent:', error.response?.data?.message || error.message);
+      }
+    }
+
+    localStorage.removeItem('learnhub_token');
+    localStorage.removeItem('learnhub_user');
+    localStorage.removeItem('token');
     setUser(null);
     setIsAuthenticated(false);
   };

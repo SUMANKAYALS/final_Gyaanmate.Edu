@@ -29,6 +29,12 @@ export default function Navbar({ onCartClick }) {
         ? '/instructor/dashboard'
         : '/student/dashboard';
 
+  const handleLogout = async () => {
+    await logout();
+    setProfileOpen(false);
+    navigate('/');
+  };
+
   return (
     <nav className="sticky top-0 z-40 glass border-b border-slate-700/50">
       <motion.div
@@ -174,7 +180,7 @@ export default function Navbar({ onCartClick }) {
                         </Link>
                         <Link to="/my-courses" onClick={() => setProfileOpen(false)} className="block px-4 py-2 hover:bg-slate-800/50 text-sm">My Courses</Link>
                         <Link to="/account" onClick={() => setProfileOpen(false)} className="block px-4 py-2 hover:bg-slate-800/50 text-sm">Profile & Avatar</Link>
-                        <button onClick={() => { logout(); setProfileOpen(false); navigate('/'); }} className="w-full text-left px-4 py-2 text-red-400 hover:bg-slate-800/50 text-sm">
+                        <button onClick={handleLogout} className="w-full text-left px-4 py-2 text-red-400 hover:bg-slate-800/50 text-sm">
                           Sign Out
                         </button>
                       </>

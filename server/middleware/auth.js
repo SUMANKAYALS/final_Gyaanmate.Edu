@@ -23,13 +23,9 @@ import User from '../models/User.js';
 
 export const protect = async (req, res, next) => {
   try {
-    console.log("Authorization Header:", req.headers.authorization);
-
     let token = req.headers.authorization?.startsWith("Bearer")
       ? req.headers.authorization.split(" ")[1]
       : null;
-
-    console.log("Token:", token);
 
     if (!token) {
       return res.status(401).json({
@@ -42,11 +38,7 @@ export const protect = async (req, res, next) => {
       process.env.JWT_SECRET || "dev_secret"
     );
 
-    console.log("Decoded:", decoded);
-
     req.user = await User.findById(decoded.id).select("-password");
-
-    console.log("User:", req.user);
 
     if (!req.user) {
       return res.status(401).json({

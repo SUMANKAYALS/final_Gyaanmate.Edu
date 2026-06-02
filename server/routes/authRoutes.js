@@ -6,6 +6,7 @@ import {
   resendVerificationOtp,
   forgotPassword,
   resetPassword,
+  logout,
   getMe,
 } from '../controllers/authController.js';
 import { updateProfile } from '../controllers/userController.js';
@@ -18,6 +19,7 @@ router.post('/verify-email', verifyEmail);
 router.post('/resend-otp', resendVerificationOtp);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
+router.post('/logout', protect, logout);
 router.get('/me', protect, getMe);
 router.put('/profile', protect, updateProfile);
 export default router;

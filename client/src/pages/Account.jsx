@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import {
@@ -30,6 +30,7 @@ const TABS = [
 export default function Account() {
   const authUser = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('profile');
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState(null);
@@ -302,10 +303,10 @@ export default function Account() {
                 <p className="text-sm text-slate-500 mb-3">Danger zone</p>
                 <button
                   type="button"
-                  onClick={() => {
-                    logout();
+                  onClick={async () => {
+                    await logout();
                     toast.success('Signed out');
-                    window.location.href = '/';
+                    navigate('/');
                   }}
                   className="px-4 py-2 rounded-lg border border-red-500/50 text-red-400 hover:bg-red-500/10 text-sm"
                 >

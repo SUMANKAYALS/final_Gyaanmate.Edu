@@ -40,7 +40,7 @@ api.interceptors.response.use(
       !url.includes('/auth/register')
     ) {
       const { useAuthStore } = await import('../store/authStore.js');
-      useAuthStore.getState().logout();
+      useAuthStore.getState().logout({ notify: false });
       const onLogin = window.location.pathname === '/login';
       if (!onLogin && !window.__learnhubRedirecting) {
         window.__learnhubRedirecting = true;
@@ -62,6 +62,16 @@ export const authAPI = {
   resendOtp: (data) => api.post('/auth/resend-otp', data),
   forgotPassword: (data) => api.post('/auth/forgot-password', data),
   resetPassword: (data) => api.post('/auth/reset-password', data),
+  logout: (token) =>
+    api.post(
+      '/auth/logout',
+      {},
+      token
+        ? {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        : undefined
+    ),
   me: () => api.get('/auth/me'),
   updateProfile: (data) => api.put('/auth/profile', data),
 };
@@ -96,6 +106,8 @@ export const aiAPI = {
   mockTest: (data) => api.post('/ai/mock-test', data),
   recommendations: (data) => api.post('/ai/recommendations', data),
   suggestedCourses: (data) => api.post('/ai/suggested-courses', data),
+  sentiment: (text) => api.post('/ai/sentiment', { text }),
+  extractText: (formData) => api.post('/ai/extract-text', formData),
   convertTextPdf: (formData) =>
     api.post('/ai/convert-text-pdf', formData, {
       responseType: 'blob',

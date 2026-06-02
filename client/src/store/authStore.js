@@ -10,6 +10,7 @@ export const useAuthStore = create((set) => ({
     set({ loading: true });
     localStorage.removeItem('learnhub_token');
     localStorage.removeItem('learnhub_user');
+    localStorage.removeItem('token');
     const { data } = await authAPI.login({
       email: String(email).trim().toLowerCase(),
       password,
@@ -24,6 +25,7 @@ export const useAuthStore = create((set) => ({
     set({ loading: true });
     localStorage.removeItem('learnhub_token');
     localStorage.removeItem('learnhub_user');
+    localStorage.removeItem('token');
     const { data } = await authAPI.register({
       ...form,
       email: String(form.email).trim().toLowerCase(),
@@ -57,11 +59,21 @@ export const useAuthStore = create((set) => ({
     return data;
   },
 
-  logout: () => {
+  logout: async ({ notify = true } = {}) => {
+    const token = localStorage.getItem('learnhub_token');
+    const logoutEmailPromise = notify && token
+      ? authAPI.logout(token).catch((error) => {
+          console.warn('Logout email could not be sent:', error.response?.data?.message || error.message);
+        })
+      : Promise.resolve();
+
     localStorage.removeItem('learnhub_token');
     localStorage.removeItem('learnhub_user');
+    localStorage.removeItem('token');
     window.__learnhubRedirecting = false;
     set({ user: null, token: null });
+
+    await logoutEmailPromise;
   },
 
   updateUser: (user) => {

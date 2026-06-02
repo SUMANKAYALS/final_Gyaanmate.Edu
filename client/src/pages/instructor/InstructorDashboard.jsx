@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { dashboardAPI, courseAPI, enrollmentAPI, communityAPI } from '../../services/api';
-import { Users, DollarSign, BookOpen, Star, TrendingUp, MessageSquare, Edit2, Trash2, Eye, Plus, EyeOff } from '../../lib/icons';
+import { Users, DollarSign, BookOpen, Star, TrendingUp, MessageSquare, Edit2, Trash2, Eye, Plus, EyeOff, Video } from '../../lib/icons';
 
 export default function InstructorDashboard() {
   const [data, setData] = useState(null);
@@ -202,6 +202,10 @@ export default function InstructorDashboard() {
           <Link to="/instructor/upload" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500">
             <Plus className="w-5 h-5" />
             Upload New Course
+          </Link>
+          <Link to="/live-session" className="ml-3 inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-violet-600 hover:bg-violet-500">
+            <Video className="w-5 h-5" />
+            Start Live Session
           </Link>
         </motion.div>
       )}

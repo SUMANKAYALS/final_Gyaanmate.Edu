@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Bot,
@@ -32,6 +33,16 @@ const QUICK_PROMPTS = [
 ];
 
 const STORAGE_KEY = 'gyaanmate-chat-sessions';
+const MAX_TEXT_FILE_SIZE = 1024 * 1024;
+const MAX_IMAGE_FILE_SIZE = 5 * 1024 * 1024;
+const TEXT_FILE_TYPES = [
+  'text/',
+  'application/json',
+  'application/javascript',
+  'application/xml',
+  'application/csv',
+];
+const IMAGE_FILE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 
 function loadSessions() {
   try {
@@ -46,6 +57,15 @@ function saveSessions(sessions) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions.slice(0, 20)));
 }
 
+function readFileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
 export default function ChatBot() {
   const navigate = useNavigate();
   const { isOpen, setIsOpen, closeChat, consumePendingPrompt } = useChat();
@@ -57,10 +77,16 @@ export default function ChatBot() {
   const [sessions, setSessions] = useState(loadSessions);
   const [activeSessionId, setActiveSessionId] = useState(null);
   const [showHistory, setShowHistory] = useState(true);
+  const [micOn, setMicOn] = useState(false);
+  const [dictationSupported, setDictationSupported] = useState(true);
+  const [attachment, setAttachment] = useState(null);
+  const [readingAttachment, setReadingAttachment] = useState(false);
 
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
   const panelRef = useRef(null);
+  const fileInputRef = useRef(null);
+  const recognitionRef = useRef(null);
   const dragRef = useRef({
     dragging: false,
     moved: false,
@@ -91,6 +117,15 @@ export default function ChatBot() {
     }
   }, [isOpen]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  useEffect(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    setDictationSupported(Boolean(SpeechRecognition));
+
+    return () => {
+      recognitionRef.current?.stop();
+    };
+  }, []);
+
   const persistSession = useCallback((msgs, id) => {
     const title = msgs.find((m) => m.role === 'user')?.content?.slice(0, 40) || 'New chat';
     const sessionId = id || `chat-${Date.now()}`;
@@ -105,13 +140,34 @@ export default function ChatBot() {
   }, []);
 
   const sendMessage = async (text) => {
-    const content = (text || input).trim();
-    if (!content || loading) return;
+    const typedContent = (text || input).trim();
+    const attachmentText = attachment
+      ? [
+        `Attached image: ${attachment.name} (${Math.ceil(attachment.size / 1024)} KB).`,
+        attachment.extractedText
+          ? `Text found in the image:\n${attachment.extractedText}`
+          : 'No readable text was extracted from the image. Respond using the message context and file name only.',
+      ].join('\n\n')
+      : '';
+    const content = [typedContent, attachmentText].filter(Boolean).join('\n\n').trim();
+    if (!content || loading || readingAttachment) return;
 
-    const userMsg = { role: 'user', content };
+    stopDictation();
+    const userMsg = {
+      role: 'user',
+      content,
+      attachment: attachment
+        ? {
+          type: 'image',
+          name: attachment.name,
+          previewUrl: attachment.previewUrl,
+        }
+        : undefined,
+    };
     const nextMessages = [...messages, userMsg];
     setMessages(nextMessages);
     setInput('');
+    setAttachment(null);
     setLoading(true);
 
     try {
@@ -140,9 +196,157 @@ export default function ChatBot() {
   };
 
   const newChat = () => {
+    stopDictation();
     setMessages([WELCOME]);
     setActiveSessionId(null);
     setInput('');
+    setAttachment(null);
+  };
+
+  const stopDictation = () => {
+    recognitionRef.current?.stop();
+    recognitionRef.current = null;
+    setMicOn(false);
+  };
+
+  const toggleDictation = () => {
+    if (micOn) {
+      stopDictation();
+      return;
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      setDictationSupported(false);
+      toast.error('Speech recognition is not supported in this browser');
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.continuous = true;
+    recognition.interimResults = true;
+
+    let committedTranscript = input.trim();
+
+    recognition.onresult = (event) => {
+      let interimTranscript = '';
+      for (let index = event.resultIndex; index < event.results.length; index += 1) {
+        const transcript = event.results[index][0].transcript;
+        if (event.results[index].isFinal) {
+          committedTranscript = `${committedTranscript} ${transcript.trim()}`.trim();
+        } else {
+          interimTranscript += transcript;
+        }
+      }
+
+      setInput(`${committedTranscript} ${interimTranscript}`.trim());
+    };
+
+    recognition.onerror = (event) => {
+      recognitionRef.current = null;
+      setMicOn(false);
+      toast.error(event.error === 'not-allowed' ? 'Microphone permission was not granted' : 'Speech recognition stopped');
+    };
+
+    recognition.onend = () => {
+      recognitionRef.current = null;
+      setMicOn(false);
+      inputRef.current?.focus();
+    };
+
+    try {
+      recognitionRef.current = recognition;
+      recognition.start();
+      setMicOn(true);
+    } catch {
+      recognitionRef.current = null;
+      setMicOn(false);
+      toast.error('Could not start microphone input');
+    }
+  };
+
+  const handleAttachClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileUpload = async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+    const isImage = IMAGE_FILE_TYPES.includes(file.type);
+
+    if (isImage) {
+      if (file.size > MAX_IMAGE_FILE_SIZE) {
+        toast.error('Image must be 5MB or smaller');
+        inputRef.current?.focus();
+        return;
+      }
+
+      setReadingAttachment(true);
+      try {
+        const previewUrl = await readFileAsDataUrl(file);
+        setAttachment({
+          type: 'image',
+          name: file.name,
+          size: file.size,
+          previewUrl,
+          extractedText: '',
+        });
+
+        const formData = new FormData();
+        formData.append('file', file);
+        const { data } = await aiAPI.extractText(formData);
+        setAttachment((current) => (
+          current?.previewUrl === previewUrl
+            ? { ...current, extractedText: data.text || '' }
+            : current
+        ));
+        toast.success(data.text ? 'Image attached and text extracted' : 'Image attached');
+      } catch {
+        toast.error('Image attached, but no readable text was found');
+      } finally {
+        setReadingAttachment(false);
+        inputRef.current?.focus();
+      }
+      return;
+    }
+
+    const canReadAsText =
+      TEXT_FILE_TYPES.some((type) => file.type.startsWith(type)) ||
+      /\.(txt|md|csv|json|js|jsx|ts|tsx|html|css|xml|log)$/i.test(file.name);
+
+    if (!canReadAsText) {
+      setInput((current) => {
+        const prefix = current.trim() ? `${current.trim()}\n\n` : '';
+        return `${prefix}I uploaded a file named "${file.name}" (${Math.ceil(file.size / 1024)} KB). Please tell me what text or details you need from it.`;
+      });
+      toast.error('Only text-based files can be read directly in chat');
+      inputRef.current?.focus();
+      return;
+    }
+
+    if (file.size > MAX_TEXT_FILE_SIZE) {
+      toast.error('Text file must be 1MB or smaller');
+      inputRef.current?.focus();
+      return;
+    }
+
+    try {
+      const text = await file.text();
+      setInput((current) => {
+        const prefix = current.trim() ? `${current.trim()}\n\n` : '';
+        return `${prefix}Attached file: ${file.name}\n\n${text.slice(0, 6000)}`;
+      });
+      toast.success('File text added to your message');
+      inputRef.current?.focus();
+    } catch {
+      toast.error('Could not read this file');
+    }
+  };
+
+  const removeAttachment = () => {
+    setAttachment(null);
   };
 
   const loadChat = (session) => {
@@ -151,7 +355,8 @@ export default function ChatBot() {
   };
 
   const onDragStart = (e, isFab = false) => {
-    e.preventDefault();
+    // e.preventDefault();
+    
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
     const el = isFab ? null : panelRef.current;
@@ -297,9 +502,8 @@ export default function ChatBot() {
                           key={s.id}
                           type="button"
                           onClick={() => loadChat(s)}
-                          className={`gyaan-chat-recent-item w-full text-left px-3 py-2 rounded-lg text-xs truncate transition cursor-pointer ${
-                            activeSessionId === s.id ? 'gyaan-chat-recent-item-active bg-violet-600/25 text-violet-200' : 'text-slate-400 hover:bg-slate-800'
-                          }`}
+                          className={`gyaan-chat-recent-item w-full text-left px-3 py-2 rounded-lg text-xs truncate transition cursor-pointer ${activeSessionId === s.id ? 'gyaan-chat-recent-item-active bg-violet-600/25 text-violet-200' : 'text-slate-400 hover:bg-slate-800'
+                            }`}
                         >
                           {s.title}
                         </button>
@@ -319,13 +523,19 @@ export default function ChatBot() {
                         className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                       >
                         <div
-                          className={`max-w-[88%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
-                            msg.role === 'user'
+                          className={`max-w-[88%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${msg.role === 'user'
                               ? 'gyaan-chat-user-bubble bg-gradient-to-br from-violet-600 to-indigo-600 text-white rounded-br-md'
                               : 'gyaan-chat-ai-bubble bg-slate-800/90 text-slate-200 border border-slate-700/50 rounded-bl-md'
-                          }`}
+                            }`}
                         >
                           <p className="whitespace-pre-wrap">{msg.content}</p>
+                          {msg.attachment?.type === 'image' && (
+                            <img
+                              src={msg.attachment.previewUrl}
+                              alt={msg.attachment.name}
+                              className="mt-3 max-h-44 rounded-xl border border-white/20 object-contain"
+                            />
+                          )}
                           {msg.courses?.length > 0 && (
                             <div className="mt-3 space-y-2">
                               {msg.courses.slice(0, 3).map((c) => (
@@ -372,9 +582,33 @@ export default function ChatBot() {
                       onSubmit={(e) => { e.preventDefault(); sendMessage(); }}
                       className="flex gap-2 items-end"
                     >
-                      <button type="button" className="p-2.5 text-slate-500 hover:text-violet-400 transition shrink-0 cursor-pointer">
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        className="hidden"
+                        accept="image/jpeg,image/jpg,image/png,image/webp,.txt,.md,.csv,.json,.js,.jsx,.ts,.tsx,.html,.css,.xml,.log,text/*,application/json,application/xml,application/csv"
+                        onChange={handleFileUpload}
+                      />
+                      <button
+                        type="button"
+                        onClick={handleAttachClick}
+                        disabled={loading}
+                        className="p-2.5 text-slate-500 hover:text-violet-400 transition shrink-0 cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
+                        title="Attach image or text file"
+                      >
                         <Paperclip size={18} />
                       </button>
+                      {attachment && (
+                        <div className="flex max-w-[10rem] items-center gap-2 rounded-xl border border-slate-700 bg-slate-800/80 px-2 py-1.5 text-xs text-slate-300">
+                          <img src={attachment.previewUrl} alt="" className="h-8 w-8 rounded-lg object-cover" />
+                          <span className="min-w-0 flex-1 truncate">
+                            {readingAttachment ? 'Reading...' : attachment.name}
+                          </span>
+                          <button type="button" onClick={removeAttachment} className="text-slate-500 hover:text-white" title="Remove image">
+                            <X size={14} />
+                          </button>
+                        </div>
+                      )}
                       <input
                         ref={inputRef}
                         value={input}
@@ -383,12 +617,19 @@ export default function ChatBot() {
                         disabled={loading}
                         className="flex-1 px-4 py-2.5 rounded-2xl bg-slate-800 border border-slate-600/60 text-white text-sm placeholder:text-slate-500 focus:outline-none focus:border-violet-500"
                       />
-                      <button type="button" className="p-2.5 text-slate-500 hover:text-violet-400 transition shrink-0 hidden sm:block cursor-pointer">
+                      <button
+                        type="button"
+                        onClick={toggleDictation}
+                        disabled={!dictationSupported || loading}
+                        className={`p-2.5 transition shrink-0 hidden sm:block cursor-pointer disabled:cursor-not-allowed disabled:opacity-40 ${micOn ? 'text-emerald-400' : 'text-slate-500 hover:text-violet-400'
+                          }`}
+                        title={micOn ? 'Stop voice input' : 'Speak your message'}
+                      >
                         <Mic size={18} />
                       </button>
                       <motion.button
                         type="submit"
-                        disabled={loading || !input.trim()}
+                        disabled={loading || readingAttachment || (!input.trim() && !attachment)}
                         whileTap={{ scale: 0.92 }}
                         className="p-2.5 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 text-white disabled:opacity-40 disabled:cursor-not-allowed shrink-0 cursor-pointer"
                       >

@@ -1,23 +1,13 @@
 import { useEffect } from "react";
-import axios from "axios";
+import api from "../services/api";
 
 export default function useActivityTracker() {
   useEffect(() => {
-    const token = localStorage.getItem("learnhub_token");
-
-    if (!token) return;
-
     const interval = setInterval(async () => {
+      if (!localStorage.getItem("learnhub_token")) return;
+
       try {
-        await axios.post(
-          `${import.meta.env.VITE_API_URL}/streak/record-activity`,
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        await api.post("/streak/record-activity");
       } catch (err) {
         console.error("Activity tracking failed");
       }

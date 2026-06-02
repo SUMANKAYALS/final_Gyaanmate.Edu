@@ -40,6 +40,12 @@ export default function TopNavbar({
         ? '/instructor/dashboard'
         : '/student/dashboard';
 
+  const handleLogout = async () => {
+    await logout();
+    setProfileOpen(false);
+    navigate('/');
+  };
+
   useEffect(() => {
     const close = () => {
       setProfileOpen(false);
@@ -188,7 +194,7 @@ export default function TopNavbar({
                       </Link>
                       <button
                         type="button"
-                        onClick={() => { logout(); setProfileOpen(false); navigate('/'); }}
+                        onClick={handleLogout}
                         className="w-full text-left px-4 py-2.5 text-sm text-red-400 hover:bg-white/5"
                       >
                         Sign Out

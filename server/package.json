@@ -25,6 +25,7 @@
     "nodemailer": "^6.9.4",
     "pdfjs-dist": "^5.7.284",
     "pdfkit": "^0.17.1",
+    "sentiment": "^5.0.2",
     "socket.io": "^4.8.3",
     "tesseract.js": "^7.0.0",
     "uuid": "^11.1.0"

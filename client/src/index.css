@@ -968,6 +968,78 @@ html.light .community-chat button.disabled\:bg-slate-700:disabled {
   color: #64748b;
 }
 
+/* Live session light mode */
+html.light .live-session-page .live-session-copy-button {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+
+html.light .live-session-page .live-session-copy-button:not(:disabled):hover {
+  background: #eef4ff;
+  color: #1d4ed8;
+}
+
+html.light .live-session-page .live-session-video-empty,
+html.light .live-session-page .live-session-video-empty .text-slate-300,
+html.light .live-session-page .live-session-video-empty .text-slate-500 {
+  color: #cbd5e1;
+}
+
+html.light .live-session-page .live-session-video-empty .text-violet-300 {
+  color: #818cf8;
+}
+
+html.light .live-session-page .live-session-create-button,
+html.light .live-session-page .live-session-create-button.text-white,
+html.light .live-session-page .live-session-join-button,
+html.light .live-session-page .live-session-join-button.text-white {
+  color: #ffffff;
+}
+
+html.light .live-session-page .live-session-create-button svg,
+html.light .live-session-page .live-session-join-button svg {
+  color: currentColor;
+}
+
+html.light .live-session-page .live-session-code-input {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #111827;
+}
+
+html.light .live-session-page .live-session-code-input::placeholder {
+  color: #64748b;
+}
+
+html.light .live-session-page .live-session-chat-message {
+  background: #eef4ff;
+  border: 1px solid #dbeafe;
+  color: #111827;
+}
+
+html.light .live-session-page .live-session-chat-message .text-white {
+  color: #111827;
+}
+
+html.light .live-session-page .live-session-chat-message .text-slate-300 {
+  color: #334155;
+}
+
+html.light .live-session-page .live-session-chat-message .text-slate-500 {
+  color: #64748b;
+}
+
+html.light .live-session-page .live-session-chat-input {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  color: #111827;
+}
+
+html.light .live-session-page .live-session-chat-input::placeholder {
+  color: #64748b;
+}
+
 /* AI mock interview keeps a deliberate dark video-call surface in light mode. */
 html.light .ai-interview-room section,
 html.light .ai-interview-room section .bg-slate-950,

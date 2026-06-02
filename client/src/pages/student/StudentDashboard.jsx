@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { dashboardAPI, paymentAPI } from '../../services/api';
 import CourseCard from '../../components/course/CourseCard';
+import { Video } from '../../lib/icons';
 
 export default function StudentDashboard() {
   const [data, setData] = useState(null);
@@ -25,6 +26,21 @@ export default function StudentDashboard() {
   return (
     <div>
       <h1 className="text-3xl font-bold gradient-text mb-8">Student Dashboard</h1>
+
+      <div className="glass-card p-5 mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-start gap-3">
+          <span className="p-3 rounded-xl bg-violet-600/20 text-violet-300">
+            <Video size={22} />
+          </span>
+          <div>
+            <h2 className="text-lg font-semibold text-white">Join a live teacher session</h2>
+            <p className="text-sm text-slate-400 mt-1">Use your instructor's room link for online teaching, screen sharing, and class chat.</p>
+          </div>
+        </div>
+        <Link to="/live-session" className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-500 text-sm font-semibold text-white">
+          <Video size={18} /> Open session
+        </Link>
+      </div>
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}

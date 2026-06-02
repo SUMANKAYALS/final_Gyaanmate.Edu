@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { aiSearch, aiChat, aiRecommendations, aiStatus, aiSuggestedCourses, botChat, convertToTextPdf, generateMockTest } from '../controllers/aiController.js';
+import { aiSearch, aiChat, aiRecommendations, aiStatus, aiSuggestedCourses, botChat, convertToTextPdf, extractText, generateMockTest, sentimentAnalytics } from '../controllers/aiController.js';
 import { CONVERTER_FILE_LIMIT_MB, converterUpload } from '../middleware/upload.js';
 
 const router = Router();
@@ -29,5 +29,7 @@ router.post('/bot', botChat);
 router.post('/mock-test', generateMockTest);
 router.post('/recommendations', aiRecommendations);
 router.post('/suggested-courses', aiSuggestedCourses);
+router.post('/sentiment', sentimentAnalytics);
+router.post('/extract-text', handleConverterUpload, extractText);
 router.post('/convert-text-pdf', handleConverterUpload, convertToTextPdf);
 export default router;

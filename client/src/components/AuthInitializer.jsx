@@ -23,7 +23,7 @@ export default function AuthInitializer({ children }) {
         const { data } = await authAPI.me();
         if (!cancelled) updateUser(data.user);
       } catch {
-        if (!cancelled) logout();
+        if (!cancelled) logout({ notify: false });
       } finally {
         if (!cancelled) setReady(true);
       }

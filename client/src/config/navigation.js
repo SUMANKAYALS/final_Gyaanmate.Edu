@@ -8,6 +8,7 @@ import {
   FaBullseye,
   FaClipboardList,
   FaFire,
+  FaVideo,
 } from 'react-icons/fa';
 
 export const mainNavLinks = [
@@ -17,6 +18,7 @@ export const mainNavLinks = [
   { id: 'recommendations', to: '/recommendations', label: 'AI Recommender', icon: 'Brain' },
   { id: 'notes', to: '/notes', label: 'Notes', icon: 'FileText' },
   { id: 'my-learning', to: '/my-courses', label: 'My Learning', icon: 'GraduationCap', auth: true },
+  { id: 'live-session', to: '/live-session', label: 'Live Session', icon: 'Video', auth: true },
   { id: 'bookmarks', to: '/bookmarks', label: 'Bookmarks', icon: 'Bookmark', auth: true },
   { id: 'mock-tests', to: '/mock-tests', label: 'Mock Tests', icon: 'ClipboardList' },
   { id: 'streaks', to: '/feature/streaks', label: 'Streaks', icon: 'Flame' },
@@ -52,6 +54,7 @@ export const featureList = [
   { title: 'Career Roadmap', icon: FaGraduationCap, path: '/feature/career-roadmap', description: 'Plan your learning path for any career.' },
   { title: 'AI Course Recommender', icon: FaRobot, path: '/recommendations', description: 'Get personalized courses and study materials from your goals.' },
   { title: 'AI Mock Interview', icon: FaUserTie, path: '/feature/mock-interview', description: 'Practice interview questions and get AI feedback.' },
+  { title: 'Live Teacher Session', icon: FaVideo, path: '/live-session', description: 'Join a real-time video classroom with your instructor.', auth: true },
   { title: 'Interactive Chat', icon: FaComments, path: '#', action: 'openChat', description: 'Ask GyaanMate AI anything, anytime.' },
   { title: 'Focus Assistance', icon: FaBullseye, path: '/feature/focus-assistance', description: 'Stay on track with personalized focus tools.' },
   { title: 'Mock Test Generator', icon: FaClipboardList, path: '/mock-tests', description: 'Practice with AI-powered mock assessments.' },

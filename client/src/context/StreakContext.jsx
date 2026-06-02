@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useRef } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 
 const StreakContext = createContext();
 
@@ -20,17 +20,11 @@ export function StreakProvider({ children }) {
 
     // Record activity every minute
     activityIntervalRef.current = setInterval(async () => {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('learnhub_token');
       if (!token || !isUserActive.current) return;
 
       try {
-        await axios.post(
-          `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/streak/record-activity`,
-          {},
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        await api.post('/streak/record-activity');
 
         // Reset activity flag for next minute
         isUserActive.current = false;

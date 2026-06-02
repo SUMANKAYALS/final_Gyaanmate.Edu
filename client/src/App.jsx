@@ -43,10 +43,12 @@ import FocusAssistance from './pages/features/FocusAssistance';
 import MockTestGenerator from './pages/features/MockTestGenerator';
 import GamifiedStreaks from './pages/features/GamifiedStreaks';
 import AIRecommendations from './pages/features/AIRecommendations';
+import LiveSession from './pages/LiveSession';
 
 const studentLinks = [
   { to: '/student/dashboard', label: 'Overview' },
   { to: '/my-courses', label: 'My Courses' },
+  { to: '/live-session', label: 'Live Session' },
   { to: '/community', label: 'Community' },
   { to: '/checkout', label: 'Checkout' },
 ];
@@ -54,6 +56,7 @@ const studentLinks = [
 const instructorLinks = [
   { to: '/instructor/dashboard', label: 'Overview' },
   { to: '/instructor/upload', label: 'Upload Course' },
+  { to: '/live-session', label: 'Live Session' },
 ];
 
 const adminLinks = [
@@ -107,6 +110,7 @@ export default function App() {
             <Route path="/notes/ai-converter" element={<NoteConverter />} />
             <Route path="/study-material" element={<StudyMaterial />} />
             <Route path="/bookmarks" element={<ProtectedRoute><Bookmarks /></ProtectedRoute>} />
+            <Route path="/live-session" element={<ProtectedRoute><LiveSession /></ProtectedRoute>} />
             <Route path="/mock-tests" element={<MockTestGenerator />} />
             <Route path="/feature/note-converter" element={<NoteConverter />} />
             <Route path="/feature/career-roadmap" element={<CareerRoadmap />} />

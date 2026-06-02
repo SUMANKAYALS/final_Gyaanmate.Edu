@@ -41,6 +41,9 @@ const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST || 'smtp.gmail.com',
   port: Number(process.env.EMAIL_PORT) || 587,
   secure: process.env.EMAIL_SECURE === 'true',
+  connectionTimeout: Number(process.env.EMAIL_CONNECTION_TIMEOUT) || 10000,
+  greetingTimeout: Number(process.env.EMAIL_GREETING_TIMEOUT) || 10000,
+  socketTimeout: Number(process.env.EMAIL_SOCKET_TIMEOUT) || 10000,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
@@ -234,6 +237,67 @@ export const sendPasswordResetEmail = async (to, otp) => {
                     <span style="display:inline-block; background:#eef2ff; color:#4f46e5; padding:16px 36px; border-radius:14px; font-size:34px; font-weight:700; letter-spacing:8px; border:2px dashed #6366f1;">${otp}</span>
                   </div>
                   <p style="font-size:14px; color:#6b7280;">If you did not request a password reset, you can safely ignore this email.</p>
+                </td>
+              </tr>
+              <tr>
+                <td style="background:#f9fafb; padding:20px; text-align:center; border-top:1px solid #e5e7eb;">
+                  <p style="margin:0; font-size:13px; color:#9ca3af;">© 2026 Gyaanmate</p>
+                </td>
+              </tr>
+            </table>
+          </td></tr>
+        </table>
+      </body>
+      </html>
+    `,
+  });
+};
+
+export const sendLogoutReloginEmail = async (to, name = 'Learner') => {
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    throw new Error(
+      'Email transport is not configured. Set EMAIL_USER and EMAIL_PASS in server/.env'
+    );
+  }
+
+  const loginUrl = `${process.env.CLIENT_URL || 'http://localhost:5173'}/login`;
+
+  await transporter.sendMail({
+    from: `"Gyaanmate" <${process.env.EMAIL_FROM || process.env.EMAIL_USER}>`,
+    to,
+    subject: 'You have logged out of Gyaanmate',
+    text: `Hi ${name}, you have successfully logged out of Gyaanmate. To continue learning, log in again here: ${loginUrl}`,
+    html: `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head><meta charset="UTF-8" /><title>Logged Out</title></head>
+      <body style="margin:0; padding:0; background:#f4f7fb; font-family:Arial, sans-serif;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f7fb; padding:40px 0;">
+          <tr><td align="center">
+            <table width="600" cellpadding="0" cellspacing="0" style="background:#fff; border-radius:18px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,0.08);">
+              <tr>
+                <td style="background:linear-gradient(135deg, #4f46e5, #7c3aed); padding:36px 30px; text-align:center; color:white;">
+                  <h1 style="margin:0; font-size:28px;">Gyaanmate</h1>
+                  <p style="margin-top:10px; font-size:15px; opacity:0.95;">Logout confirmation</p>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:36px 32px; color:#374151;">
+                  <h2 style="margin-top:0; font-size:24px; color:#111827;">You have logged out</h2>
+                  <p style="font-size:16px; line-height:26px; color:#4b5563;">
+                    Hi <strong>${name}</strong>, your Gyaanmate session has ended successfully.
+                  </p>
+                  <p style="font-size:16px; line-height:26px; color:#4b5563;">
+                    Ready to continue learning? Use the button below to sign in again.
+                  </p>
+                  <div style="margin-top:30px; text-align:center;">
+                    <a href="${loginUrl}" style="display:inline-block; background:linear-gradient(135deg, #4f46e5, #7c3aed); color:white; text-decoration:none; padding:14px 34px; border-radius:10px; font-size:16px; font-weight:600;">
+                      Login Again
+                    </a>
+                  </div>
+                  <p style="margin-top:28px; font-size:14px; color:#6b7280;">
+                    If this was not you, please reset your password from the login page.
+                  </p>
                 </td>
               </tr>
               <tr>

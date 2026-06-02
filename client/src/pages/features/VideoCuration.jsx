@@ -24,6 +24,12 @@ const FALLBACK_QUESTIONS = {
   ],
 };
 
+const TONE_STYLES = {
+  positive: 'border-emerald-500/25 bg-emerald-500/10 text-emerald-200',
+  negative: 'border-rose-500/25 bg-rose-500/10 text-rose-200',
+  neutral: 'border-slate-600 bg-slate-800/70 text-slate-300',
+};
+
 function formatTime(seconds) {
   const minutes = Math.floor(seconds / 60).toString().padStart(2, '0');
   const rest = (seconds % 60).toString().padStart(2, '0');
@@ -45,6 +51,7 @@ export default function VideoCuration() {
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState('');
   const [feedback, setFeedback] = useState('');
+  const [answerSentiment, setAnswerSentiment] = useState(null);
   const [loadingQuestion, setLoadingQuestion] = useState(false);
   const [loadingFeedback, setLoadingFeedback] = useState(false);
   const [cameraOn, setCameraOn] = useState(false);
@@ -188,6 +195,7 @@ export default function VideoCuration() {
 
     setLoadingQuestion(true);
     setFeedback('');
+    setAnswerSentiment(null);
     setAnswer('');
     setElapsed(0);
     try {
@@ -218,17 +226,31 @@ export default function VideoCuration() {
 
     setLoadingFeedback(true);
     try {
-      const { data } = await aiAPI.bot([
-        {
-          role: 'user',
-          content: `Review this mock video interview answer for a ${role || DEFAULT_ROLE} role.
+      const [feedbackResult, sentimentResult] = await Promise.allSettled([
+        aiAPI.bot([
+          {
+            role: 'user',
+            content: `Review this mock video interview answer for a ${role || DEFAULT_ROLE} role.
 Question: ${question}
 Answer: ${answer}
 
 Give concise feedback with strengths, improvements, confidence tips, and a stronger sample answer.`,
-        },
+          },
+        ]),
+        aiAPI.sentiment(answer),
       ]);
-      setFeedback(data.content || 'No feedback returned.');
+
+      if (feedbackResult.status === 'fulfilled') {
+        setFeedback(feedbackResult.value.data.content || 'No feedback returned.');
+      } else {
+        throw feedbackResult.reason;
+      }
+
+      if (sentimentResult.status === 'fulfilled') {
+        setAnswerSentiment(sentimentResult.value.data);
+      } else {
+        setAnswerSentiment(null);
+      }
     } catch {
       toast.error('Could not review your answer');
     } finally {
@@ -240,6 +262,7 @@ Give concise feedback with strengths, improvements, confidence tips, and a stron
     setQuestion('');
     setAnswer('');
     setFeedback('');
+    setAnswerSentiment(null);
     setElapsed(0);
     stopDictation();
     window.speechSynthesis?.cancel();
@@ -443,6 +466,17 @@ Give concise feedback with strengths, improvements, confidence tips, and a stron
 
         <div className="rounded-xl border border-emerald-500/20 bg-slate-900/50 p-5">
           <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-emerald-300">AI Feedback</p>
+          {answerSentiment && (
+            <div className={`mb-4 rounded-xl border p-3 text-sm ${TONE_STYLES[answerSentiment.label] || TONE_STYLES.neutral}`}>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="font-semibold capitalize">Answer tone: {answerSentiment.label}</span>
+                <span className="text-xs opacity-80">Score {answerSentiment.score}</span>
+              </div>
+              <p className="mt-2 text-xs opacity-80">
+                Positive words: {answerSentiment.positive?.length || 0} | Negative words: {answerSentiment.negative?.length || 0}
+              </p>
+            </div>
+          )}
           {feedback ? (
             <p className="whitespace-pre-wrap text-sm leading-7 text-slate-200">{feedback}</p>
           ) : (
