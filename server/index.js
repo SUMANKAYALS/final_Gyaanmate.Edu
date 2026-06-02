@@ -19,9 +19,7 @@ import { initializeSocket } from './socket.js';
 
 dotenv.config();
 dotenv.config({ path: new URL('./.env', import.meta.url) });
-console.log("Current working dir:", process.cwd());
-console.log("EMAIL_USER:", process.env.EMAIL_USER);
-console.log("EMAIL_PASS:", process.env.EMAIL_PASS ? "FOUND" : "MISSING");
+console.log('Current working dir:', process.cwd());
 
 const app = express();
 const server = createServer(app);
@@ -48,6 +46,8 @@ app.get('/api/health', (_, res) => {
     status: 'ok',
     platform: 'Gyaanmate',
     cloudinary: isCloudinaryConfigured(),
+    mongoState: mongoose.connection.readyState,
+    mongoConnected: mongoose.connection.readyState === 1
   });
 });
 

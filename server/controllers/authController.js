@@ -198,13 +198,13 @@ export const resetPassword = async (req, res) => {
 };
 
 export const logout = async (req, res) => {
-  console.log("Logout route called");
+  console.log('Logout route called');
   try {
     await sendLogoutReloginEmail(req.user.email, req.user.name);
     res.json({ message: 'Logged out successfully. A login reminder has been sent to your email.' });
   } catch (error) {
     console.error('logout email:', error);
-    res.status(500).json({ message: 'Logged out, but unable to send the login email.' });
+    res.json({ message: 'Logged out successfully. Login reminder email could not be sent.' });
   }
 };
 

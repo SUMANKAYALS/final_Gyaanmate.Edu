@@ -1,89 +1,58 @@
-// import nodemailer from 'nodemailer';
-
-// const transporter = nodemailer.createTransport({
-//   host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-//   port: Number(process.env.EMAIL_PORT) || 587,
-//   secure: process.env.EMAIL_SECURE === 'true',
-//   auth: {
-//     user: process.env.EMAIL_USER,
-//     pass: process.env.EMAIL_PASS,
-//   },
-// });
-
-// export const sendVerificationEmail = async (to, otp) => {
-//   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-//     throw new Error(
-//       'Email transport is not configured. Set EMAIL_USER and EMAIL_PASS in server/.env'
-//     );
-//   }
-
-//   await transporter.sendMail({
-//     from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
-//     to,
-//     subject: 'Verify your Gyaanmate account',
-//     text: `Your Gyaanmate verification code is ${otp}. It expires in 15 minutes.`,
-//     html: `
-//       <div style="font-family: Arial, sans-serif; color: #1f2937;">
-//         <h2>Verify your Gyaanmate account</h2>
-//         <p>Your verification code is:</p>
-//         <p style="font-size: 24px; font-weight: bold;">${otp}</p>
-//         <p>This code expires in 15 minutes.</p>
-//       </div>
-//     `,
-//   });
-// };
-
-
-
 import nodemailer from 'nodemailer';
 
-const createTransporter = () => nodemailer.createTransport({
-  host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-  port: Number(process.env.EMAIL_PORT) || 587,
-  secure: process.env.EMAIL_SECURE === 'true',
-  connectionTimeout: Number(process.env.EMAIL_CONNECTION_TIMEOUT) || 10000,
-  greetingTimeout: Number(process.env.EMAIL_GREETING_TIMEOUT) || 10000,
-  socketTimeout: Number(process.env.EMAIL_SOCKET_TIMEOUT) || 10000,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+const createTransporter = () => {
+  const port = Number(process.env.EMAIL_PORT) || 587;
+  const secure = process.env.EMAIL_SECURE
+    ? process.env.EMAIL_SECURE === 'true'
+    : port === 465;
 
-
-// const transporter = nodemailer.createTransport({
-//   host: process.env.EMAIL_HOST,
-//   port: Number(process.env.EMAIL_PORT),
-//   secure: process.env.EMAIL_SECURE === "true",
-//   auth: {
-//     user: process.env.EMAIL_USER,
-//     pass: process.env.EMAIL_PASS,
-//   },
-// });
-
-// const transporter = createTransporter();
-// console.log("EMAIL_USER =", process.env.EMAIL_USER);
-// console.log("EMAIL_PASS =", process.env.EMAIL_PASS ? "FOUND" : "MISSING");
+  return nodemailer.createTransport({
+    service: process.env.EMAIL_SERVICE || undefined,
+    host: process.env.EMAIL_SERVICE ? undefined : process.env.EMAIL_HOST || 'smtp.gmail.com',
+    port,
+    secure,
+    connectionTimeout: Number(process.env.EMAIL_CONNECTION_TIMEOUT) || 30000,
+    greetingTimeout: Number(process.env.EMAIL_GREETING_TIMEOUT) || 30000,
+    socketTimeout: Number(process.env.EMAIL_SOCKET_TIMEOUT) || 30000,
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
+};
 
 const getFromAddress = () =>
   process.env.EMAIL_FROM || `"Gyaanmate" <${process.env.EMAIL_USER}>`;
 
-export const sendVerificationEmail = async (to, otp) => {
-  const transporter = createTransporter();
-  console.log("EMAIL_USER:", process.env.EMAIL_USER);
-  console.log("Sending reset email to:", to);
+const getLogoUrl = () =>
+  process.env.EMAIL_LOGO_URL ||
+  'https://res.cloudinary.com/de8ntd31m/image/upload/v1779644841/WhatsApp_Image_2026-05-24_at_11.10.05_PM_s64mny.jpg';
+
+const ensureSmtpConfigured = () => {
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
     throw new Error(
-      'Email transport is not configured. Set EMAIL_USER and EMAIL_PASS in server/.env'
+      'Google SMTP is not configured. Set EMAIL_USER to your Gmail address and EMAIL_PASS to a Gmail App Password.'
     );
   }
+};
 
-  // await transporter.verify();
-  // console.log("SMTP connection successful");
+const sendEmail = async (mailOptions) => {
+  ensureSmtpConfigured();
 
+  try {
+    await createTransporter().sendMail(mailOptions);
+  } catch (error) {
+    if (error?.code === 'ETIMEDOUT' && error?.command === 'CONN') {
+      error.message = `${error.message}. Check that your deployment platform allows outbound SMTP on port ${process.env.EMAIL_PORT || 587}. Vercel blocks port 25, so use Gmail port 587 or 465.`;
+    }
+    throw error;
+  }
+};
 
+export const sendVerificationEmail = async (to, otp) => {
+  console.log('Sending verification email to:', to);
 
-  await transporter.sendMail({
+  await sendEmail({
     from: getFromAddress(),
     to,
     subject: 'Verify your Gyaanmate account',
@@ -116,6 +85,13 @@ export const sendVerificationEmail = async (to, otp) => {
                       color:white;
                     "
                   >
+                    <img
+                      src="${getLogoUrl()}"
+                      width="72"
+                      height="72"
+                      alt="Gyaanmate"
+                      style="display:block; width:72px; height:72px; margin:0 auto 16px; border-radius:18px; object-fit:cover;"
+                    />
                     <h1 style="margin:0; font-size:32px; font-weight:700;">
                       Gyaanmate
                     </h1>
@@ -255,19 +231,9 @@ export const sendVerificationEmail = async (to, otp) => {
 // };
 
 export const sendPasswordResetEmail = async (to, otp) => {
-  const transporter = createTransporter();
-  console.log("EMAIL_USER:", process.env.EMAIL_USER);
-  console.log("Sending reset email to:", to);
-  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-    throw new Error(
-      'Email transport is not configured. Set EMAIL_USER and EMAIL_PASS in server/.env'
-    );
-  }
+  console.log('Sending reset email to:', to);
 
-  await transporter.verify();
-  console.log("SMTP connection successful");
-
-  await transporter.sendMail({
+  await sendEmail({
     from: getFromAddress(),
     to,
     subject: 'Reset your Gyaanmate password',
@@ -282,6 +248,7 @@ export const sendPasswordResetEmail = async (to, otp) => {
             <table width="600" cellpadding="0" cellspacing="0" style="background:#fff; border-radius:18px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,0.08);">
               <tr>
                 <td style="background:linear-gradient(135deg, #4f46e5, #7c3aed); padding:36px 30px; text-align:center; color:white;">
+                  <img src="${getLogoUrl()}" width="68" height="68" alt="Gyaanmate" style="display:block; width:68px; height:68px; margin:0 auto 14px; border-radius:17px; object-fit:cover;" />
                   <h1 style="margin:0; font-size:28px;">Gyaanmate</h1>
                   <p style="margin-top:10px; font-size:15px; opacity:0.95;">Password reset request</p>
                 </td>
@@ -313,21 +280,11 @@ export const sendPasswordResetEmail = async (to, otp) => {
 };
 
 export const sendLogoutReloginEmail = async (to, name = 'Learner') => {
-  const transporter = createTransporter();
-  console.log("EMAIL_USER:", process.env.EMAIL_USER);
-  console.log("Sending reset email to:", to);
-  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-    throw new Error(
-      'Email transport is not configured. Set EMAIL_USER and EMAIL_PASS in server/.env'
-    );
-  }
+  console.log('Sending logout email to:', to);
 
   const loginUrl = `${process.env.CLIENT_URL || 'http://localhost:5173'}/login`;
 
-  await transporter.verify();
-  console.log("SMTP connection successful");
-
-  await transporter.sendMail({
+  await sendEmail({
     from: getFromAddress(),
     to,
     subject: 'You have logged out of Gyaanmate',
@@ -342,6 +299,7 @@ export const sendLogoutReloginEmail = async (to, name = 'Learner') => {
             <table width="600" cellpadding="0" cellspacing="0" style="background:#fff; border-radius:18px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,0.08);">
               <tr>
                 <td style="background:linear-gradient(135deg, #4f46e5, #7c3aed); padding:36px 30px; text-align:center; color:white;">
+                  <img src="${getLogoUrl()}" width="68" height="68" alt="Gyaanmate" style="display:block; width:68px; height:68px; margin:0 auto 14px; border-radius:17px; object-fit:cover;" />
                   <h1 style="margin:0; font-size:28px;">Gyaanmate</h1>
                   <p style="margin-top:10px; font-size:15px; opacity:0.95;">Logout confirmation</p>
                 </td>
