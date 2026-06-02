@@ -148,7 +148,7 @@ export const forgotPassword = async (req, res) => {
 
   try {
     const user = await User.findOne({ email });
-    if (user && user.emailVerified) {
+    if (user) {
       const otp = await savePasswordResetOtp(user);
       await sendPasswordResetEmail(email, otp);
     }
@@ -177,9 +177,6 @@ export const resetPassword = async (req, res) => {
   if (!user) {
     return res.status(400).json({ message: 'Invalid or expired reset code.' });
   }
-  if (!user.emailVerified) {
-    return res.status(400).json({ message: 'Please verify your email before resetting your password.' });
-  }
   if (
     !user.passwordResetOtp ||
     !user.passwordResetOtpExpires ||
@@ -192,6 +189,7 @@ export const resetPassword = async (req, res) => {
   }
 
   user.password = password;
+  user.emailVerified = true;
   user.passwordResetOtp = undefined;
   user.passwordResetOtpExpires = undefined;
   await user.save();

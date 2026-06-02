@@ -1,4 +1,4 @@
-import 'dotenv/config';
+import dotenv from 'dotenv';
 import express from 'express';
 import { createServer } from 'http';
 import cors from 'cors';
@@ -16,6 +16,12 @@ import communityRoutes from './routes/communityRoutes.js';
 import notesRoutes from './routes/notesRoutes.js';
 import streakRoutes from './routes/streakRoutes.js';
 import { initializeSocket } from './socket.js';
+
+dotenv.config();
+dotenv.config({ path: new URL('./.env', import.meta.url) });
+console.log("Current working dir:", process.cwd());
+console.log("EMAIL_USER:", process.env.EMAIL_USER);
+console.log("EMAIL_PASS:", process.env.EMAIL_PASS ? "FOUND" : "MISSING");
 
 const app = express();
 const server = createServer(app);

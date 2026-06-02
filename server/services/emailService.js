@@ -37,7 +37,7 @@
 
 import nodemailer from 'nodemailer';
 
-const transporter = nodemailer.createTransport({
+const createTransporter = () => nodemailer.createTransport({
   host: process.env.EMAIL_HOST || 'smtp.gmail.com',
   port: Number(process.env.EMAIL_PORT) || 587,
   secure: process.env.EMAIL_SECURE === 'true',
@@ -50,7 +50,15 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// const transporter = createTransporter();
+// console.log("EMAIL_USER =", process.env.EMAIL_USER);
+// console.log("EMAIL_PASS =", process.env.EMAIL_PASS ? "FOUND" : "MISSING");
+
+const getFromAddress = () =>
+  process.env.EMAIL_FROM || `"Gyaanmate" <${process.env.EMAIL_USER}>`;
+
 export const sendVerificationEmail = async (to, otp) => {
+  const transporter = createTransporter();
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
     throw new Error(
       'Email transport is not configured. Set EMAIL_USER and EMAIL_PASS in server/.env'
@@ -58,7 +66,7 @@ export const sendVerificationEmail = async (to, otp) => {
   }
 
   await transporter.sendMail({
-    from: `"Gyaanmate" <${process.env.EMAIL_FROM || process.env.EMAIL_USER}>`,
+    from: getFromAddress(),
     to,
     subject: 'Verify your Gyaanmate account',
     text: `Your Gyaanmate verification code is ${otp}. It expires in 15 minutes.`,
@@ -202,6 +210,7 @@ export const sendVerificationEmail = async (to, otp) => {
 };
 
 export const sendPasswordResetEmail = async (to, otp) => {
+  const transporter = createTransporter();
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
     throw new Error(
       'Email transport is not configured. Set EMAIL_USER and EMAIL_PASS in server/.env'
@@ -209,7 +218,7 @@ export const sendPasswordResetEmail = async (to, otp) => {
   }
 
   await transporter.sendMail({
-    from: `"Gyaanmate" <${process.env.EMAIL_FROM || process.env.EMAIL_USER}>`,
+    from: getFromAddress(),
     to,
     subject: 'Reset your Gyaanmate password',
     text: `Your password reset code is ${otp}. It expires in 15 minutes. If you did not request this, ignore this email.`,
@@ -254,6 +263,7 @@ export const sendPasswordResetEmail = async (to, otp) => {
 };
 
 export const sendLogoutReloginEmail = async (to, name = 'Learner') => {
+  const transporter = createTransporter();
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
     throw new Error(
       'Email transport is not configured. Set EMAIL_USER and EMAIL_PASS in server/.env'
@@ -263,7 +273,7 @@ export const sendLogoutReloginEmail = async (to, name = 'Learner') => {
   const loginUrl = `${process.env.CLIENT_URL || 'http://localhost:5173'}/login`;
 
   await transporter.sendMail({
-    from: `"Gyaanmate" <${process.env.EMAIL_FROM || process.env.EMAIL_USER}>`,
+    from: getFromAddress(),
     to,
     subject: 'You have logged out of Gyaanmate',
     text: `Hi ${name}, you have successfully logged out of Gyaanmate. To continue learning, log in again here: ${loginUrl}`,
@@ -313,3 +323,4 @@ export const sendLogoutReloginEmail = async (to, name = 'Learner') => {
     `,
   });
 };
+
