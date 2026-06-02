@@ -46,8 +46,8 @@ app.get('/api/health', (_, res) => {
     status: 'ok',
     platform: 'Gyaanmate',
     cloudinary: isCloudinaryConfigured(),
-    mongoState: mongoose.connection.readyState,
-    mongoConnected: mongoose.connection.readyState === 1
+    // mongoState: mongoose.connection.readyState,
+    mongoConnected: connectDB()
   });
 });
 
