@@ -227,90 +227,90 @@ export const sendVerificationEmail = async (to, otp) => {
   });
 };
 
-export const sendPasswordResetEmail = async (to, otp) => {
-  const transporter = createTransporter();
-
-  try {
-    console.log("EMAIL_HOST:", process.env.EMAIL_HOST);
-    console.log("EMAIL_PORT:", process.env.EMAIL_PORT);
-    console.log("EMAIL_SECURE:", process.env.EMAIL_SECURE);
-
-    await transporter.verify();
-    console.log("SMTP connection successful");
-
-    const info = await transporter.sendMail({
-      from: getFromAddress(),
-      to,
-      subject: "Reset your Gyaanmate password",
-      text: `Your OTP is ${otp}`,
-      html: `<h1>${otp}</h1>`
-    });
-
-    console.log("Email sent:", info.messageId);
-
-  } catch (error) {
-    console.error("SMTP ERROR:", error);
-    throw error;
-  }
-};
-
 // export const sendPasswordResetEmail = async (to, otp) => {
 //   const transporter = createTransporter();
-//   console.log("EMAIL_USER:", process.env.EMAIL_USER);
-//   console.log("Sending reset email to:", to);
-//   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-//     throw new Error(
-//       'Email transport is not configured. Set EMAIL_USER and EMAIL_PASS in server/.env'
-//     );
+
+//   try {
+//     console.log("EMAIL_HOST:", process.env.EMAIL_HOST);
+//     console.log("EMAIL_PORT:", process.env.EMAIL_PORT);
+//     console.log("EMAIL_SECURE:", process.env.EMAIL_SECURE);
+
+//     await transporter.verify();
+//     console.log("SMTP connection successful");
+
+//     const info = await transporter.sendMail({
+//       from: getFromAddress(),
+//       to,
+//       subject: "Reset your Gyaanmate password",
+//       text: `Your OTP is ${otp}`,
+//       html: `<h1>${otp}</h1>`
+//     });
+
+//     console.log("Email sent:", info.messageId);
+
+//   } catch (error) {
+//     console.error("SMTP ERROR:", error);
+//     throw error;
 //   }
-
-//   await transporter.verify();
-//   console.log("SMTP connection successful");
-
-//   await transporter.sendMail({
-//     from: getFromAddress(),
-//     to,
-//     subject: 'Reset your Gyaanmate password',
-//     text: `Your password reset code is ${otp}. It expires in 15 minutes. If you did not request this, ignore this email.`,
-//     html: `
-//       <!DOCTYPE html>
-//       <html lang="en">
-//       <head><meta charset="UTF-8" /><title>Reset Password</title></head>
-//       <body style="margin:0; padding:0; background:#f4f7fb; font-family:Arial, sans-serif;">
-//         <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f7fb; padding:40px 0;">
-//           <tr><td align="center">
-//             <table width="600" cellpadding="0" cellspacing="0" style="background:#fff; border-radius:18px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,0.08);">
-//               <tr>
-//                 <td style="background:linear-gradient(135deg, #4f46e5, #7c3aed); padding:36px 30px; text-align:center; color:white;">
-//                   <h1 style="margin:0; font-size:28px;">Gyaanmate</h1>
-//                   <p style="margin-top:10px; font-size:15px; opacity:0.95;">Password reset request</p>
-//                 </td>
-//               </tr>
-//               <tr>
-//                 <td style="padding:36px 32px; color:#374151;">
-//                   <h2 style="margin-top:0; font-size:24px; color:#111827;">Reset your password</h2>
-//                   <p style="font-size:16px; line-height:26px; color:#4b5563;">
-//                     Use this code on the reset password page. It expires in <strong>15 minutes</strong>.
-//                   </p>
-//                   <div style="margin:28px 0; text-align:center;">
-//                     <span style="display:inline-block; background:#eef2ff; color:#4f46e5; padding:16px 36px; border-radius:14px; font-size:34px; font-weight:700; letter-spacing:8px; border:2px dashed #6366f1;">${otp}</span>
-//                   </div>
-//                   <p style="font-size:14px; color:#6b7280;">If you did not request a password reset, you can safely ignore this email.</p>
-//                 </td>
-//               </tr>
-//               <tr>
-//                 <td style="background:#f9fafb; padding:20px; text-align:center; border-top:1px solid #e5e7eb;">
-//                   <p style="margin:0; font-size:13px; color:#9ca3af;">© 2026 Gyaanmate</p>
-//                 </td>
-//               </tr>
-//             </table>
-//           </td></tr>
-//         </table>
-//       </body>
-//       </html>
-//     `,
-//   });
 // };
+
+export const sendPasswordResetEmail = async (to, otp) => {
+  const transporter = createTransporter();
+  console.log("EMAIL_USER:", process.env.EMAIL_USER);
+  console.log("Sending reset email to:", to);
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    throw new Error(
+      'Email transport is not configured. Set EMAIL_USER and EMAIL_PASS in server/.env'
+    );
+  }
+
+  await transporter.verify();
+  console.log("SMTP connection successful");
+
+  await transporter.sendMail({
+    from: getFromAddress(),
+    to,
+    subject: 'Reset your Gyaanmate password',
+    text: `Your password reset code is ${otp}. It expires in 15 minutes. If you did not request this, ignore this email.`,
+    html: `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head><meta charset="UTF-8" /><title>Reset Password</title></head>
+      <body style="margin:0; padding:0; background:#f4f7fb; font-family:Arial, sans-serif;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f7fb; padding:40px 0;">
+          <tr><td align="center">
+            <table width="600" cellpadding="0" cellspacing="0" style="background:#fff; border-radius:18px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,0.08);">
+              <tr>
+                <td style="background:linear-gradient(135deg, #4f46e5, #7c3aed); padding:36px 30px; text-align:center; color:white;">
+                  <h1 style="margin:0; font-size:28px;">Gyaanmate</h1>
+                  <p style="margin-top:10px; font-size:15px; opacity:0.95;">Password reset request</p>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:36px 32px; color:#374151;">
+                  <h2 style="margin-top:0; font-size:24px; color:#111827;">Reset your password</h2>
+                  <p style="font-size:16px; line-height:26px; color:#4b5563;">
+                    Use this code on the reset password page. It expires in <strong>15 minutes</strong>.
+                  </p>
+                  <div style="margin:28px 0; text-align:center;">
+                    <span style="display:inline-block; background:#eef2ff; color:#4f46e5; padding:16px 36px; border-radius:14px; font-size:34px; font-weight:700; letter-spacing:8px; border:2px dashed #6366f1;">${otp}</span>
+                  </div>
+                  <p style="font-size:14px; color:#6b7280;">If you did not request a password reset, you can safely ignore this email.</p>
+                </td>
+              </tr>
+              <tr>
+                <td style="background:#f9fafb; padding:20px; text-align:center; border-top:1px solid #e5e7eb;">
+                  <p style="margin:0; font-size:13px; color:#9ca3af;">© 2026 Gyaanmate</p>
+                </td>
+              </tr>
+            </table>
+          </td></tr>
+        </table>
+      </body>
+      </html>
+    `,
+  });
+};
 
 export const sendLogoutReloginEmail = async (to, name = 'Learner') => {
   const transporter = createTransporter();
