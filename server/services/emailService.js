@@ -59,6 +59,8 @@ const getFromAddress = () =>
 
 export const sendVerificationEmail = async (to, otp) => {
   const transporter = createTransporter();
+  console.log("EMAIL_USER:", process.env.EMAIL_USER);
+  console.log("Sending reset email to:", to);
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
     throw new Error(
       'Email transport is not configured. Set EMAIL_USER and EMAIL_PASS in server/.env'
@@ -211,6 +213,8 @@ export const sendVerificationEmail = async (to, otp) => {
 
 export const sendPasswordResetEmail = async (to, otp) => {
   const transporter = createTransporter();
+  console.log("EMAIL_USER:", process.env.EMAIL_USER);
+  console.log("Sending reset email to:", to);
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
     throw new Error(
       'Email transport is not configured. Set EMAIL_USER and EMAIL_PASS in server/.env'
@@ -264,6 +268,8 @@ export const sendPasswordResetEmail = async (to, otp) => {
 
 export const sendLogoutReloginEmail = async (to, name = 'Learner') => {
   const transporter = createTransporter();
+  console.log("EMAIL_USER:", process.env.EMAIL_USER);
+  console.log("Sending reset email to:", to);
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
     throw new Error(
       'Email transport is not configured. Set EMAIL_USER and EMAIL_PASS in server/.env'
