@@ -194,11 +194,18 @@ export const sentimentAnalytics = async (req, res) => {
 };
 
 export const aiStatus = async (_req, res) => {
+  const ocrProviders = [
+    process.env.GEMINI_API_KEY ? 'gemini-handwriting' : null,
+    'tesseract',
+    process.env.OCR_SPACE_API_KEY ? 'ocrspace' : 'ocrspace-demo',
+  ].filter(Boolean);
+
   res.json({
     gemini: isGeminiConfigured(),
     ocr: true,
-    ocrProvider: process.env.OCR_SPACE_API_KEY ? 'tesseract+ocrspace' : 'tesseract+ocrspace-demo',
-    model: process.env.GEMINI_MODEL || 'gemini-2.0-flash',
+    ocrProvider: ocrProviders.join('+'),
+    model: process.env.GROQ_MODEL || 'llama-3.1-8b-instant',
+    ocrModel: process.env.GEMINI_OCR_MODEL || process.env.GEMINI_MODEL || 'gemini-2.0-flash',
   });
 };
 

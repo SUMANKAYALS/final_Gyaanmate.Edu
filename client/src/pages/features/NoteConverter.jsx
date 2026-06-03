@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import FeaturePageShell from '../../components/features/FeaturePageShell';
-import { CheckCircle2, Download, FileText, Image, Loader2, Upload } from '../../lib/icons';
+import { CheckCircle2, Clock, Download, FileText, Image, Loader2, Upload } from '../../lib/icons';
 import { aiAPI } from '../../services/api';
 
 const ACCEPTED_TYPES = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'];
@@ -19,6 +19,7 @@ export default function NoteConverter() {
   const [file, setFile] = useState(null);
   const [outputName, setOutputName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState('');
 
   const handleFile = (selectedFile) => {
     if (!selectedFile) return;
@@ -32,6 +33,7 @@ export default function NoteConverter() {
     }
     setFile(selectedFile);
     setOutputName(selectedFile.name.replace(/\.(pdf|jpg|jpeg|png|webp)$/i, '-text.pdf'));
+    setStatus('');
   };
 
   const handleConvert = async () => {
@@ -41,6 +43,12 @@ export default function NoteConverter() {
     }
 
     setLoading(true);
+    setStatus('Uploading file');
+    const statusTimers = [
+      setTimeout(() => setStatus('Reading scanned pages'), 1200),
+      setTimeout(() => setStatus('Running handwriting OCR'), 4500),
+      setTimeout(() => setStatus('Building searchable PDF'), 12000),
+    ];
     try {
       const formData = new FormData();
       formData.append('file', file);
@@ -55,6 +63,7 @@ export default function NoteConverter() {
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
+      setStatus('Text PDF downloaded');
       toast.success('Text PDF downloaded');
     } catch (err) {
       let message = 'Failed to convert file';
@@ -68,8 +77,10 @@ export default function NoteConverter() {
       } else if (data?.message) {
         message = data.message;
       }
+      setStatus('Conversion failed');
       toast.error(message);
     } finally {
+      statusTimers.forEach(clearTimeout);
       setLoading(false);
     }
   };
@@ -83,8 +94,9 @@ export default function NoteConverter() {
       backTo="/notes"
       backLabel="Back"
       backMode="history"
+      wide
     >
-      <div className="grid gap-5 md:grid-cols-[1.1fr_0.9fr]">
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,1.05fr)_minmax(320px,0.95fr)]">
         <div>
           <button
             type="button"
@@ -135,7 +147,7 @@ export default function NoteConverter() {
           )}
         </div>
 
-        <div className="rounded-xl border border-slate-700/60 bg-slate-900/40 p-5">
+        <div className="flex min-w-0 flex-col rounded-xl border border-slate-700/60 bg-slate-900/40 p-5">
           <p className="text-xs font-semibold uppercase tracking-wider text-violet-300">Output</p>
           <h2 className="mt-2 text-xl font-semibold text-white">Searchable text PDF</h2>
           <p className="mt-2 text-sm leading-6 text-slate-400">
@@ -154,13 +166,13 @@ export default function NoteConverter() {
           <button
             type="button"
             onClick={handleConvert}
-            disabled={loading}
-            className="btn-primary mt-6 w-full disabled:opacity-50"
+            disabled={loading || !file}
+            className="btn-primary mt-6 min-h-12 w-full disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading ? (
               <>
                 <Loader2 size={18} className="animate-spin" />
-                Preparing OCR
+                {status || 'Preparing OCR'}
               </>
             ) : (
               <>
@@ -175,11 +187,30 @@ export default function NoteConverter() {
               Output file: {outputName}
             </p>
           )}
+
+          <div className="mt-4 rounded-lg border border-slate-700/60 bg-slate-950/40 p-3">
+            <div className="flex items-start gap-3">
+              <span className={`mt-0.5 ${loading ? 'text-violet-300' : status === 'Conversion failed' ? 'text-rose-300' : 'text-slate-400'}`}>
+                {loading ? <Loader2 size={16} className="animate-spin" /> : <Clock size={16} />}
+              </span>
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-slate-200">
+                  {status || 'Ready to convert'}
+                </p>
+                <p className="mt-1 text-xs leading-5 text-slate-500">
+                  Handwritten pages can take longer than printed PDFs. Keep this page open until the download starts.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
       <div className="mt-6 flex flex-wrap gap-3 text-sm">
-        <Link to="/notes/upload" className="btn-primary px-4 py-2 text-sm">
+        <Link
+          to="/notes/upload"
+          className={`btn-primary px-4 py-2 text-sm ${loading ? 'pointer-events-none opacity-50' : ''}`}
+        >
           Upload Converted PDF
         </Link>
         <Link to="/notes" className="btn-ghost px-4 py-2 text-sm">
