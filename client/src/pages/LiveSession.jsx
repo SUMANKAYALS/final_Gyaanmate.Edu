@@ -17,6 +17,11 @@ import {
 import { useAuthStore } from '../store/authStore';
 
 const API_ORIGIN = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace(/\/api\/?$/, '');
+const SOCKET_ORIGIN = (import.meta.env.VITE_SOCKET_URL || API_ORIGIN).replace(/\/$/, '');
+const SOCKET_PATH = '/socket.io';
+const ICE_SERVERS = [
+  { urls: 'stun:stun.l.google.com:19302' },
+];
 
 const makeRoomId = () =>
   `class-${Math.random().toString(36).slice(2, 6)}-${Date.now().toString(36).slice(-4)}`;
@@ -38,7 +43,7 @@ function loadSocketClient() {
     }
 
     const script = document.createElement('script');
-    script.src = `${API_ORIGIN}/socket.io/socket.io.js`;
+    script.src = `${SOCKET_ORIGIN}${SOCKET_PATH}/socket.io.js`;
     script.async = true;
     script.dataset.socketIoClient = 'true';
     script.onload = () => resolve(window.io);
@@ -94,9 +99,9 @@ export default function LiveSession() {
     }
   }, []);
 
-  const createPeer = useCallback((targetSocketId) => {
+  const createPeer = useCallback((targetSocketId, activeRoomId) => {
     const peer = new RTCPeerConnection({
-      iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
+      iceServers: ICE_SERVERS,
     });
 
     localStreamRef.current?.getTracks().forEach((track) => {
@@ -113,7 +118,7 @@ export default function LiveSession() {
     peer.onicecandidate = (event) => {
       if (event.candidate && socketRef.current && targetSocketId) {
         socketRef.current.emit('live_session_signal', {
-          roomId,
+          roomId: activeRoomId,
           to: targetSocketId,
           signal: { type: 'candidate', candidate: event.candidate },
         });
@@ -128,7 +133,7 @@ export default function LiveSession() {
 
     peerRef.current = peer;
     return peer;
-  }, [roomId]);
+  }, []);
 
   const cleanupPeer = useCallback(() => {
     peerRef.current?.close();
@@ -167,10 +172,26 @@ export default function LiveSession() {
 
       const participant = { ...displayUser, role };
       const io = await loadSocketClient();
-      const socket = io(API_ORIGIN, { transports: ['websocket', 'polling'] });
+      const socket = io(SOCKET_ORIGIN, {
+        path: SOCKET_PATH,
+        transports: ['polling', 'websocket'],
+        upgrade: true,
+        withCredentials: true,
+        autoConnect: false,
+        timeout: 10000,
+        reconnection: true,
+        reconnectionAttempts: 8,
+        reconnectionDelay: 1000,
+        reconnectionDelayMax: 5000,
+        randomizationFactor: 0.5,
+      });
       socketRef.current = socket;
 
       socket.on('connect', () => {
+        console.debug('Live session socket transport:', socket.io.engine.transport.name);
+        socket.io.engine.on('upgrade', (transport) => {
+          console.debug('Live session socket transport:', transport.name);
+        });
         socket.emit('live_session_join', {
           roomId: nextRoomId,
           user: participant,
@@ -182,7 +203,7 @@ export default function LiveSession() {
       socket.on('live_session_peer_joined', async ({ socketId, user: peerUser }) => {
         remoteSocketIdRef.current = socketId;
         setRemoteUser(peerUser);
-        const peer = createPeer(socketId);
+        const peer = createPeer(socketId, nextRoomId);
         const offer = await peer.createOffer();
         await peer.setLocalDescription(offer);
         socket.emit('live_session_signal', {
@@ -201,7 +222,7 @@ export default function LiveSession() {
 
       socket.on('live_session_signal', async ({ from, signal }) => {
         remoteSocketIdRef.current = from;
-        const peer = peerRef.current || createPeer(from);
+        const peer = peerRef.current || createPeer(from, nextRoomId);
 
         if (signal.type === 'offer') {
           await peer.setRemoteDescription(new RTCSessionDescription(signal.sdp));
@@ -230,7 +251,27 @@ export default function LiveSession() {
       });
 
       socket.on('live_session_peer_left', cleanupPeer);
-      socket.on('connect_error', () => toast.error('Could not connect to live session server.'));
+      socket.on('connect_error', (error) => {
+        console.error('Live session socket connection error:', error.message);
+      });
+
+      await new Promise((resolve, reject) => {
+        const timer = window.setTimeout(() => {
+          reject(new Error('Live session server connection timed out.'));
+        }, 15000);
+
+        socket.once('connect', () => {
+          window.clearTimeout(timer);
+          resolve();
+        });
+
+        socket.once('connect_error', (error) => {
+          window.clearTimeout(timer);
+          reject(error);
+        });
+
+        socket.connect();
+      });
     } catch (error) {
       toast.error(error.message || 'Unable to start camera or microphone.');
       leaveSession();
