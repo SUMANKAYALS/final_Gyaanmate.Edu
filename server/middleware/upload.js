@@ -1,6 +1,21 @@
 import multer from 'multer';
 
 const IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+const COMMUNITY_IMAGE_TYPES = [...IMAGE_TYPES, 'image/gif'];
+const COMMUNITY_FILE_TYPES = [
+  ...COMMUNITY_IMAGE_TYPES,
+  'application/pdf',
+  'text/plain',
+  'text/csv',
+  'application/json',
+  'application/zip',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/vnd.ms-powerpoint',
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  'application/vnd.ms-excel',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+];
 const VIDEO_TYPES = ['video/mp4', 'video/quicktime', 'video/x-matroska'];
 const PDF_TYPES = ['application/pdf'];
 export const NOTES_FILE_LIMIT_MB = 100;
@@ -75,6 +90,22 @@ export const converterUpload = multer({
     }
     if (!IMAGE_TYPES.includes(file.mimetype) && !PDF_TYPES.includes(file.mimetype)) {
       return cb(new Error('File must be a PDF, JPG, PNG, or WEBP'));
+    }
+    cb(null, true);
+  },
+}).single('file');
+
+export const communityUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 25 * 1024 * 1024,
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.fieldname !== 'file') {
+      return cb(new Error('Unexpected upload field'));
+    }
+    if (!COMMUNITY_FILE_TYPES.includes(file.mimetype)) {
+      return cb(new Error('Upload an image, GIF, PDF, document, spreadsheet, zip, or text file'));
     }
     cb(null, true);
   },

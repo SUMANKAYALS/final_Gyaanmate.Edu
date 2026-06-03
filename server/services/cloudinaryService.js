@@ -89,3 +89,21 @@ export async function uploadPdf(buffer, originalName, folder = 'learnhub/resourc
     mimeType: 'application/pdf',
   };
 }
+
+export async function uploadRaw(buffer, originalName, mimeType, folder = 'learnhub/community') {
+  if (!configured) initCloudinary();
+  if (!configured) throw new Error('Cloudinary is not configured');
+
+  const baseName = originalName.replace(/\.[^/.]+$/, '').replace(/[^a-zA-Z0-9_-]/g, '_');
+  const result = await uploadBuffer(buffer, {
+    folder,
+    resource_type: 'auto',
+    public_id: `${baseName}-${Date.now()}`,
+  });
+  return {
+    url: result.secure_url,
+    name: originalName,
+    size: result.bytes,
+    mimeType,
+  };
+}

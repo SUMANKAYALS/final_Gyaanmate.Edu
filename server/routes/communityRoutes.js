@@ -4,6 +4,9 @@ import {
   createChannel,
   getChannelById,
   joinChannel,
+  leaveChannel,
+  searchStickers,
+  uploadMessageAttachment,
   getMessages,
   createMessage,
   updateMessage,
@@ -21,6 +24,7 @@ import {
   respondToConnection,
 } from '../controllers/communityController.js';
 import { protect } from '../middleware/auth.js';
+import { communityUpload } from '../middleware/upload.js';
 
 const router = Router();
 
@@ -29,8 +33,11 @@ router.get('/channels', protect, getChannels);
 router.post('/channels', protect, createChannel);
 router.get('/channels/:id', protect, getChannelById);
 router.post('/channels/:id/join', protect, joinChannel);
+router.post('/channels/:id/leave', protect, leaveChannel);
 
 // Message routes
+router.get('/stickers', protect, searchStickers);
+router.post('/channels/:channelId/attachments', protect, communityUpload, uploadMessageAttachment);
 router.get('/channels/:channelId/messages', protect, getMessages);
 router.post('/channels/:channelId/messages', protect, createMessage);
 router.put('/messages/:id', protect, updateMessage);

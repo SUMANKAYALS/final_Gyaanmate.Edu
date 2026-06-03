@@ -4,13 +4,19 @@ const messageSchema = new mongoose.Schema(
   {
     channel: { type: mongoose.Schema.Types.ObjectId, ref: 'CommunityChannel', required: true },
     sender: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    content: { type: String, required: true, trim: true },
+    content: { type: String, default: '', trim: true },
     type: { 
       type: String, 
-      enum: ['text', 'image', 'file', 'system'], 
+      enum: ['text', 'image', 'gif', 'file', 'system'], 
       default: 'text' 
     },
-    attachments: [{ type: String }],
+    attachments: [{
+      url: { type: String, required: true },
+      name: { type: String, default: 'Attachment' },
+      size: { type: Number, default: 0 },
+      mimeType: { type: String, default: 'application/octet-stream' },
+      kind: { type: String, enum: ['image', 'gif', 'file'], default: 'file' },
+    }],
     replyTo: { type: mongoose.Schema.Types.ObjectId, ref: 'Message' },
     reactions: [{
       user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },

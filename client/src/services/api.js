@@ -145,7 +145,10 @@ export const communityAPI = {
   createChannel: (data) => api.post('/community/channels', data),
   getChannel: (id) => api.get(`/community/channels/${id}`),
   joinChannel: (id) => api.post(`/community/channels/${id}/join`),
+  leaveChannel: (id) => api.post(`/community/channels/${id}/leave`),
   // Messages
+  getStickers: (params) => api.get('/community/stickers', { params }),
+  uploadAttachment: (channelId, data) => api.post(`/community/channels/${channelId}/attachments`, data),
   getMessages: (channelId, params) => api.get(`/community/channels/${channelId}/messages`, { params }),
   createMessage: (channelId, data) => api.post(`/community/channels/${channelId}/messages`, data),
   updateMessage: (id, data) => api.put(`/community/messages/${id}`, data),

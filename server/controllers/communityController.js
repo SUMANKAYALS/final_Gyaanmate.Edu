@@ -3,6 +3,26 @@ import Message from '../models/Message.js';
 import DiscussionThread from '../models/DiscussionThread.js';
 import Reply from '../models/Reply.js';
 import UserConnection from '../models/UserConnection.js';
+import { getIO } from '../socket.js';
+import { uploadRaw } from '../services/cloudinaryService.js';
+
+const GIPHY_PUBLIC_DEMO_KEY = 'dc6zaTOxFJmzC';
+
+const isChannelMember = (channel, userId) =>
+  channel.members.some((memberId) => memberId.toString() === userId.toString());
+
+const mapGiphySticker = (item) => {
+  const image = item.images?.fixed_height || item.images?.downsized || item.images?.original || {};
+  return {
+    id: item.id,
+    title: item.title || 'GIF sticker',
+    url: image.webp || image.url,
+    previewUrl: item.images?.fixed_width_small?.webp || item.images?.fixed_width_small?.url || image.webp || image.url,
+    width: Number(image.width) || 0,
+    height: Number(image.height) || 0,
+    source: 'giphy',
+  };
+};
 
 // Channel Controllers
 export const getChannels = async (req, res) => {
@@ -69,12 +89,16 @@ export const joinChannel = async (req, res) => {
       return res.status(404).json({ message: 'Channel not found' });
     }
     
-    if (channel.members.includes(req.user._id)) {
+    const isMember = isChannelMember(channel, req.user._id);
+    if (isMember) {
       return res.status(400).json({ message: 'Already a member' });
     }
     
     channel.members.push(req.user._id);
     await channel.save();
+    await channel.populate('createdBy', 'name avatar');
+    await channel.populate('members', 'name avatar');
+    await channel.populate('lastMessage', 'content createdAt');
     
     res.json({ channel });
   } catch (error) {
@@ -82,7 +106,104 @@ export const joinChannel = async (req, res) => {
   }
 };
 
+export const leaveChannel = async (req, res) => {
+  try {
+    const channel = await CommunityChannel.findById(req.params.id);
+
+    if (!channel) {
+      return res.status(404).json({ message: 'Channel not found' });
+    }
+
+    if (!isChannelMember(channel, req.user._id)) {
+      return res.status(400).json({ message: 'You are not a member of this channel' });
+    }
+
+    channel.members = channel.members.filter(
+      (memberId) => memberId.toString() !== req.user._id.toString()
+    );
+    await channel.save();
+    await channel.populate('createdBy', 'name avatar');
+    await channel.populate('members', 'name avatar');
+    await channel.populate('lastMessage', 'content createdAt');
+
+    res.json({ channel });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // Message Controllers
+export const searchStickers = async (req, res) => {
+  try {
+    const apiKey = process.env.GIPHY_API_KEY || GIPHY_PUBLIC_DEMO_KEY;
+
+    const query = String(req.query.q || '').trim();
+    const limit = Math.min(Number(req.query.limit) || 16, 24);
+    const endpoint = query
+      ? 'https://api.giphy.com/v1/stickers/search'
+      : 'https://api.giphy.com/v1/stickers/trending';
+    const url = new URL(endpoint);
+    url.searchParams.set('api_key', apiKey);
+    url.searchParams.set('limit', String(limit));
+    url.searchParams.set('rating', 'pg');
+    if (query) url.searchParams.set('q', query);
+
+    const response = await fetch(url);
+    const data = await response.json();
+    if (!response.ok) {
+      return res.status(response.status).json({
+        message: data?.meta?.msg || 'Unable to load GIF stickers',
+      });
+    }
+
+    res.json({ stickers: (data.data || []).map(mapGiphySticker).filter((item) => item.url) });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const uploadMessageAttachment = async (req, res) => {
+  try {
+    const { channelId } = req.params;
+    const file = req.file;
+
+    if (!file) {
+      return res.status(400).json({ message: 'Choose a file to upload' });
+    }
+
+    const channel = await CommunityChannel.findById(channelId);
+    if (!channel) {
+      return res.status(404).json({ message: 'Channel not found' });
+    }
+
+    if (!isChannelMember(channel, req.user._id)) {
+      return res.status(403).json({ message: 'Join this channel before sharing files' });
+    }
+
+    const uploaded = await uploadRaw(
+      file.buffer,
+      file.originalname,
+      file.mimetype,
+      'learnhub/community'
+    );
+    const kind = file.mimetype === 'image/gif'
+      ? 'gif'
+      : file.mimetype.startsWith('image/')
+        ? 'image'
+        : 'file';
+
+    res.status(201).json({
+      attachment: {
+        ...uploaded,
+        size: file.size || uploaded.size,
+        kind,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 export const getMessages = async (req, res) => {
   try {
     const { channelId } = req.params;
@@ -105,13 +226,27 @@ export const createMessage = async (req, res) => {
   try {
     const { channelId } = req.params;
     const { content, type, attachments, replyTo } = req.body;
+
+    const channel = await CommunityChannel.findById(channelId);
+    if (!channel) {
+      return res.status(404).json({ message: 'Channel not found' });
+    }
+
+    if (!isChannelMember(channel, req.user._id)) {
+      return res.status(403).json({ message: 'Join this channel before chatting' });
+    }
+
+    const nextAttachments = Array.isArray(attachments) ? attachments : [];
+    if (!String(content || '').trim() && nextAttachments.length === 0) {
+      return res.status(400).json({ message: 'Message cannot be empty' });
+    }
     
     const message = await Message.create({
       channel: channelId,
       sender: req.user._id,
-      content,
-      type: type || 'text',
-      attachments: attachments || [],
+      content: content || '',
+      type: type || (nextAttachments[0]?.kind || 'text'),
+      attachments: nextAttachments,
       replyTo
     });
     
@@ -122,6 +257,8 @@ export const createMessage = async (req, res) => {
       lastMessage: message._id,
       $inc: { messageCount: 1 }
     });
+
+    getIO().to(channelId).emit('new_message', message);
     
     res.status(201).json({ message });
   } catch (error) {
@@ -179,6 +316,11 @@ export const addReaction = async (req, res) => {
     if (!message) {
       return res.status(404).json({ message: 'Message not found' });
     }
+
+    const channel = await CommunityChannel.findById(message.channel);
+    if (!channel || !isChannelMember(channel, req.user._id)) {
+      return res.status(403).json({ message: 'Join this channel before reacting' });
+    }
     
     const existingReaction = message.reactions.find(
       r => r.user.toString() === req.user._id.toString() && r.emoji === emoji
@@ -193,6 +335,8 @@ export const addReaction = async (req, res) => {
     }
     
     await message.save();
+    await message.populate('sender', 'name avatar');
+    getIO().to(message.channel.toString()).emit('message_reaction', message);
     res.json({ message });
   } catch (error) {
     res.status(500).json({ message: error.message });

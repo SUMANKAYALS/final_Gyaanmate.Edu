@@ -18,6 +18,7 @@ export const mainNavLinks = [
   { id: 'recommendations', to: '/recommendations', label: 'AI Recommender', icon: 'Brain' },
   { id: 'notes', to: '/notes', label: 'Notes', icon: 'FileText' },
   { id: 'my-learning', to: '/my-courses', label: 'My Learning', icon: 'GraduationCap', auth: true },
+  { id: 'community', to: '/community', label: 'Community', icon: 'Users', auth: true },
   { id: 'live-session', to: '/live-session', label: 'Live Session', icon: 'Video', auth: true },
   { id: 'bookmarks', to: '/bookmarks', label: 'Bookmarks', icon: 'Bookmark', auth: true },
   { id: 'mock-tests', to: '/mock-tests', label: 'Mock Tests', icon: 'ClipboardList' },
