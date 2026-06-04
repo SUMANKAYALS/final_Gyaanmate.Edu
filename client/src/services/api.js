@@ -115,6 +115,14 @@ export const aiAPI = {
   status: () => api.get('/ai/status'),
 };
 
+export const codingPracticeAPI = {
+  getProblems: () => api.get('/coding-practice/problems'),
+  getProblem: (slug) => api.get(`/coding-practice/problems/${slug}`),
+  getProblemTests: (slug) => api.get(`/coding-practice/problems/${slug}/tests`),
+  submit: (slug, data) => api.post(`/coding-practice/problems/${slug}/submissions`, data),
+  mySubmissions: () => api.get('/coding-practice/submissions/mine'),
+};
+
 export const categoryAPI = {
   getAll: () => api.get('/categories'),
   getCourses: (slug) => api.get(`/categories/${slug}/courses`),

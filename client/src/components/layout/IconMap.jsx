@@ -18,6 +18,7 @@ import {
   Menu,
   X,
   ScrollText,
+  Code2,
 } from '../../lib/icons';
 
 const map = {
@@ -40,6 +41,7 @@ const map = {
   Menu,
   X,
   ScrollText,
+  Code2,
 };
 
 export function NavIcon({ name, size = 18, className = '' }) {

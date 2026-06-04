@@ -43,6 +43,7 @@ import FocusAssistance from './pages/features/FocusAssistance';
 import MockTestGenerator from './pages/features/MockTestGenerator';
 import GamifiedStreaks from './pages/features/GamifiedStreaks';
 import AIRecommendations from './pages/features/AIRecommendations';
+import CodingPractice from './pages/features/CodingPractice';
 import LiveSession from './pages/LiveSession';
 
 const studentLinks = [
@@ -112,9 +113,11 @@ export default function App() {
             <Route path="/bookmarks" element={<ProtectedRoute><Bookmarks /></ProtectedRoute>} />
             <Route path="/live-session" element={<ProtectedRoute><LiveSession /></ProtectedRoute>} />
             <Route path="/mock-tests" element={<MockTestGenerator />} />
+            <Route path="/coding-practice" element={<CodingPractice />} />
             <Route path="/feature/note-converter" element={<NoteConverter />} />
             <Route path="/feature/career-roadmap" element={<CareerRoadmap />} />
             <Route path="/feature/recommendations" element={<AIRecommendations />} />
+            <Route path="/feature/coding-practice" element={<CodingPractice />} />
             <Route path="/feature/mock-interview" element={<VideoCuration />} />
             <Route path="/feature/video-curation" element={<VideoCuration />} />
             <Route path="/feature/focus-assistance" element={<FocusAssistance />} />

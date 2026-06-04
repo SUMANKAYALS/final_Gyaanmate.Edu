@@ -34,7 +34,8 @@ const LANGUAGES = ['English', 'Spanish', 'French', 'German', 'Hindi', 'Arabic', 
 const IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 const VIDEO_TYPES = ['video/mp4', 'video/quicktime', 'video/x-matroska'];
 const MAX_IMAGE = 5 * 1024 * 1024;
-const MAX_VIDEO = 500 * 1024 * 1024;
+const MAX_VIDEO_MB = 100;
+const MAX_VIDEO = MAX_VIDEO_MB * 1024 * 1024;
 
 function FieldLabel({ icon: Icon, children, required }) {
   return (
@@ -160,7 +161,7 @@ export default function UploadCourse() {
       return;
     }
     if (file.size > MAX_VIDEO) {
-      toast.error('Video must be 500MB or smaller');
+      toast.error(`Video must be ${MAX_VIDEO_MB}MB or smaller`);
       return;
     }
     if (videoPreview) URL.revokeObjectURL(videoPreview);
@@ -194,7 +195,7 @@ export default function UploadCourse() {
       return;
     }
     if (file.size > MAX_VIDEO) {
-      toast.error('Lesson video must be 500MB or smaller');
+      toast.error(`Lesson video must be ${MAX_VIDEO_MB}MB or smaller`);
       return;
     }
     const preview = URL.createObjectURL(file);
@@ -402,7 +403,7 @@ export default function UploadCourse() {
                 accept=".mp4,.mov,.mkv,video/mp4,video/quicktime,video/x-matroska"
                 maxSize={MAX_VIDEO}
                 label="Upload course intro video"
-                hint="MP4, MOV, MKV · Max 500MB"
+                hint={`MP4, MOV, MKV · Max ${MAX_VIDEO_MB}MB`}
                 icon={Video}
                 onFiles={pickVideo}
                 disabled={publishing}
@@ -490,7 +491,7 @@ export default function UploadCourse() {
                         accept=".mp4,.mov,.mkv,video/mp4,video/quicktime,video/x-matroska"
                         maxSize={MAX_VIDEO}
                         label="Upload lesson video"
-                        hint="MP4, MOV, MKV · Max 500MB"
+                        hint={`MP4, MOV, MKV · Max ${MAX_VIDEO_MB}MB`}
                         icon={Video}
                         onFiles={(file) => pickLessonVideo(index, file)}
                         disabled={publishing}

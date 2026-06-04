@@ -9,6 +9,7 @@ import {
   FaClipboardList,
   FaFire,
   FaVideo,
+  FaCode,
 } from 'react-icons/fa';
 
 export const mainNavLinks = [
@@ -21,6 +22,7 @@ export const mainNavLinks = [
   { id: 'community', to: '/community', label: 'Community', icon: 'Users', auth: true },
   { id: 'live-session', to: '/live-session', label: 'Live Session', icon: 'Video', auth: true },
   { id: 'bookmarks', to: '/bookmarks', label: 'Bookmarks', icon: 'Bookmark', auth: true },
+  { id: 'coding-practice', to: '/coding-practice', label: 'Coding Practice', icon: 'Code2' },
   { id: 'mock-tests', to: '/mock-tests', label: 'Mock Tests', icon: 'ClipboardList' },
   { id: 'streaks', to: '/feature/streaks', label: 'Streaks', icon: 'Flame' },
   { id: 'subscription', to: '/subscription', label: 'Subscription', icon: 'Crown' },
@@ -44,6 +46,7 @@ export const mobileNavLinks = [
   { id: 'home', to: '/', label: 'Home', icon: 'Home', end: true },
   { id: 'courses', to: '/browse', label: 'Courses', icon: 'BookOpen' },
   { id: 'ai-search', to: '/ai-search', label: 'Search', icon: 'Sparkles' },
+  { id: 'coding-practice', to: '/coding-practice', label: 'Code', icon: 'Code2' },
   { id: 'notes', to: '/notes', label: 'Notes', icon: 'FileText' },
   { id: 'profile', to: '/account', label: 'Profile', icon: 'User' },
 ];
@@ -54,6 +57,7 @@ export const featureList = [
   { title: 'Study Material', icon: FaBook, path: '/study-material', description: 'Browse PDFs and notes from top students.' },
   { title: 'Career Roadmap', icon: FaGraduationCap, path: '/feature/career-roadmap', description: 'Plan your learning path for any career.' },
   { title: 'AI Course Recommender', icon: FaRobot, path: '/recommendations', description: 'Get personalized courses and study materials from your goals.' },
+  { title: 'Coding Practice', icon: FaCode, path: '/coding-practice', description: 'Solve interview-style coding problems with hidden tests and progress tracking.' },
   { title: 'AI Mock Interview', icon: FaUserTie, path: '/feature/mock-interview', description: 'Practice interview questions and get AI feedback.' },
   { title: 'Live Teacher Session', icon: FaVideo, path: '/live-session', description: 'Join a real-time video classroom with your instructor.', auth: true },
   { title: 'Interactive Chat', icon: FaComments, path: '#', action: 'openChat', description: 'Ask GyaanMate AI anything, anytime.' },

@@ -18,13 +18,15 @@ const COMMUNITY_FILE_TYPES = [
 ];
 const VIDEO_TYPES = ['video/mp4', 'video/quicktime', 'video/x-matroska'];
 const PDF_TYPES = ['application/pdf'];
+const MB = 1024 * 1024;
+export const COURSE_VIDEO_LIMIT_MB = 100;
 export const NOTES_FILE_LIMIT_MB = 100;
 export const CONVERTER_FILE_LIMIT_MB = 100;
 
 export const courseUpload = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 500 * 1024 * 1024,
+    fileSize: COURSE_VIDEO_LIMIT_MB * MB,
   },
   fileFilter: (req, file, cb) => {
     if (file.fieldname === 'thumbnail') {
@@ -113,17 +115,17 @@ export const communityUpload = multer({
 
 export function validateUploadSizes(req, res, next) {
   const thumb = req.files?.thumbnail?.[0];
-  if (thumb && thumb.size > 5 * 1024 * 1024) {
+  if (thumb && thumb.size > 5 * MB) {
     return res.status(400).json({ message: 'Thumbnail must be 5MB or smaller' });
   }
   const video = req.files?.introVideo?.[0];
-  if (video && video.size > 500 * 1024 * 1024) {
-    return res.status(400).json({ message: 'Intro video must be 500MB or smaller' });
+  if (video && video.size > COURSE_VIDEO_LIMIT_MB * MB) {
+    return res.status(400).json({ message: `Intro video must be ${COURSE_VIDEO_LIMIT_MB}MB or smaller` });
   }
   const lessonVideos = req.files?.lessonVideos || [];
-  const oversizeLesson = lessonVideos.find((file) => file.size > 500 * 1024 * 1024);
+  const oversizeLesson = lessonVideos.find((file) => file.size > COURSE_VIDEO_LIMIT_MB * MB);
   if (oversizeLesson) {
-    return res.status(400).json({ message: `Lesson video "${oversizeLesson.originalname}" must be 500MB or smaller` });
+    return res.status(400).json({ message: `Lesson video "${oversizeLesson.originalname}" must be ${COURSE_VIDEO_LIMIT_MB}MB or smaller` });
   }
   next();
 }

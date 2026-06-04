@@ -15,6 +15,7 @@ import categoryRoutes from './routes/categoryRoutes.js';
 import communityRoutes from './routes/communityRoutes.js';
 import notesRoutes from './routes/notesRoutes.js';
 import streakRoutes from './routes/streakRoutes.js';
+import codingPracticeRoutes from './routes/codingPracticeRoutes.js';
 import { initializeSocket } from './socket.js';
 
 dotenv.config();
@@ -67,6 +68,7 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/community', communityRoutes);
 app.use('/api/notes', notesRoutes);
 app.use('/api/streak', streakRoutes);
+app.use('/api/coding-practice', codingPracticeRoutes);
 
 app.use((err, _req, res, _next) => {
   if (err instanceof multer.MulterError) {

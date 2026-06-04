@@ -15,7 +15,7 @@ import {
   deleteFeedback,
 } from '../controllers/feedbackController.js';
 import { protect, authorize } from '../middleware/auth.js';
-import { courseUpload, validateUploadSizes } from '../middleware/upload.js';
+import { COURSE_VIDEO_LIMIT_MB, courseUpload, validateUploadSizes } from '../middleware/upload.js';
 
 const router = Router();
 router.get('/', getCourses);
@@ -30,7 +30,7 @@ router.post(
       if (err) {
         const msg =
           err.code === 'LIMIT_FILE_SIZE'
-            ? 'File too large. Thumbnail max 5MB, video max 500MB.'
+            ? `File too large. Thumbnail max 5MB, videos and PDFs max ${COURSE_VIDEO_LIMIT_MB}MB.`
             : err.message || 'Upload failed';
         return res.status(400).json({ message: msg });
       }
