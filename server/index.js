@@ -82,15 +82,31 @@ app.use((err, _req, res, _next) => {
   res.status(err.status || 500).json({ message: err.message || 'Server error' });
 });
 
-async function startServer() {
-  initCloudinary();
-  initializeSocket(server);
-  server.listen(PORT, () => console.log(`Gyaanmate API running on port ${PORT}`));
+// async function startServer() {
+//   initCloudinary();
+//   initializeSocket(server);
+//   server.listen(PORT, () => console.log(`Gyaanmate API running on port ${PORT}`));
 
+//   try {
+//     await connectDB();
+//   } catch (err) {
+//     console.error('DB connection failed. API is still running without database:', err.message);
+//   }
+// }
+
+async function startServer() {
   try {
     await connectDB();
+
+    initCloudinary();
+    initializeSocket(server);
+
+    server.listen(PORT, () => {
+      console.log(`Gyaanmate API running on port ${PORT}`);
+    });
   } catch (err) {
-    console.error('DB connection failed. API is still running without database:', err.message);
+    console.error('Failed to start server:', err);
+    process.exit(1);
   }
 }
 
