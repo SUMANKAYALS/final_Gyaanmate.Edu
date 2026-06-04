@@ -68,8 +68,8 @@ export const authAPI = {
       {},
       token
         ? {
-            headers: { Authorization: `Bearer ${token}` },
-          }
+          headers: { Authorization: `Bearer ${token}` },
+        }
         : undefined
     ),
   me: () => api.get('/auth/me'),
@@ -108,6 +108,10 @@ export const aiAPI = {
   suggestedCourses: (data) => api.post('/ai/suggested-courses', data),
   sentiment: (text) => api.post('/ai/sentiment', { text }),
   extractText: (formData) => api.post('/ai/extract-text', formData),
+  focusCoach: (prompt) =>
+    api.post('/focus-coach/generate', {
+      prompt,
+    }),
   convertTextPdf: (formData) =>
     api.post('/ai/convert-text-pdf', formData, {
       responseType: 'blob',

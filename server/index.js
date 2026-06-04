@@ -18,6 +18,8 @@ import streakRoutes from './routes/streakRoutes.js';
 import codingPracticeRoutes from './routes/codingPracticeRoutes.js';
 import { initializeSocket } from './socket.js';
 
+import focusCoachRoutes from './routes/focusCoachRoutes.js';
+
 dotenv.config();
 dotenv.config({ path: new URL('./.env', import.meta.url) });
 console.log('Current working dir:', process.cwd());
@@ -69,6 +71,7 @@ app.use('/api/community', communityRoutes);
 app.use('/api/notes', notesRoutes);
 app.use('/api/streak', streakRoutes);
 app.use('/api/coding-practice', codingPracticeRoutes);
+app.use('/api/focus-coach', focusCoachRoutes);
 
 app.use((err, _req, res, _next) => {
   if (err instanceof multer.MulterError) {
