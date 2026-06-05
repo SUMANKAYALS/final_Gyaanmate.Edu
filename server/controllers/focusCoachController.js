@@ -1,18 +1,18 @@
-import dotenv from 'dotenv';
-dotenv.config();
 import Groq from 'groq-sdk';
 
-console.log('GROQ_API_KEY:', process.env.GROQ_API_KEY);
+let groq;
 
-if (!process.env.GROQ_API_KEY) {
-  throw new Error('GROQ_API_KEY not found');
+function getGroqClient() {
+  if (!process.env.GROQ_API_KEY) {
+    throw new Error('GROQ_API_KEY not found');
+  }
+  if (!groq) {
+    groq = new Groq({
+      apiKey: process.env.GROQ_API_KEY,
+    });
+  }
+  return groq;
 }
-
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
-});
-
-console.log('GROQ_API_KEY:', process.env.GROQ_API_KEY);
 
 export const focusCoach = async (req, res) => {
   try {
@@ -24,8 +24,8 @@ export const focusCoach = async (req, res) => {
       });
     }
 
-    const completion = await groq.chat.completions.create({
-      model: 'llama-3.1-8b-instant',
+    const completion = await getGroqClient().chat.completions.create({
+      model: process.env.GROQ_MODEL || 'llama-3.1-8b-instant',
       messages: [
         {
           role: 'user',

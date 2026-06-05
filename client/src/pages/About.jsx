@@ -23,7 +23,7 @@ const team = [
     glow: 'shadow-blue-500/10',
     github: 'https://github.com/Debanjan-Projects',
     cv: '/cv/Debanjan-Roy.pdf',
-    portfolio: 'https://debanjan-portfolio.netlify.app',
+    portfolio: 'https://www.linkedin.com/in/debanjan-roy7/',
   },
   {
     name: 'Anik Pal',
@@ -35,7 +35,7 @@ const team = [
     glow: 'shadow-emerald-500/10',
     github: 'https://github.com/the-anik-2004',
     cv: '/cv/Anik Pal Resume4online.pdf',
-    portfolio: 'https://anikpal-dev.netlify.app',
+    portfolio: 'https://www.linkedin.com/in/the-anik-pal/',
   },
   {
     name: 'Sandipan Mondal',
@@ -47,7 +47,7 @@ const team = [
     glow: 'shadow-teal-500/10',
     github: 'https://github.com/sandipan-m18',
     cv: '/cv/sandipan-mandal.pdf',
-    portfolio: 'https://sandipan-dev.netlify.app',
+    portfolio: 'https://www.linkedin.com/in/sandipanmondal18/',
   },
   {
     name: 'Suman Kayal',

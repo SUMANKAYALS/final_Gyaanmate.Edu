@@ -7,6 +7,40 @@ import { useTheme } from '../../context/ThemeContext';
 import { authAPI } from '../../services/api';
 import { BRAND_LOGO_URL, BRAND_NAME } from '../../config/brand';
 
+function PasswordInput({
+  value,
+  onChange,
+  placeholder,
+  visible,
+  setVisible,
+  label,
+  inputClass,
+  mutedClass,
+}) {
+  return (
+    <div className="relative">
+      <Lock className={`absolute left-4 top-1/2 -translate-y-1/2 ${mutedClass}`} size={17} />
+      <input
+        type={visible ? 'text' : 'password'}
+        required
+        minLength={6}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        className={`w-full rounded-lg border py-3 pl-11 pr-12 text-sm outline-none transition focus:ring-4 ${inputClass}`}
+      />
+      <button
+        type="button"
+        onClick={() => setVisible((current) => !current)}
+        className={`absolute right-4 top-1/2 -translate-y-1/2 ${mutedClass} hover:text-violet-500`}
+        aria-label={label}
+      >
+        {visible ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
+      </button>
+    </div>
+  );
+}
+
 export default function ForgotPassword() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -114,36 +148,6 @@ export default function ForgotPassword() {
     : 'border-slate-700 bg-slate-900/80 text-white placeholder:text-slate-500 focus:border-violet-400 focus:ring-violet-500/20';
   const mutedClass = isLight ? 'text-slate-600' : 'text-slate-400';
 
-  const PasswordInput = ({
-    value,
-    onChange,
-    placeholder,
-    visible,
-    setVisible,
-    label,
-  }) => (
-    <div className="relative">
-      <Lock className={`absolute left-4 top-1/2 -translate-y-1/2 ${mutedClass}`} size={17} />
-      <input
-        type={visible ? 'text' : 'password'}
-        required
-        minLength={6}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        className={`w-full rounded-lg border py-3 pl-11 pr-12 text-sm outline-none transition focus:ring-4 ${inputClass}`}
-      />
-      <button
-        type="button"
-        onClick={() => setVisible(!visible)}
-        className={`absolute right-4 top-1/2 -translate-y-1/2 ${mutedClass} hover:text-violet-500`}
-        aria-label={label}
-      >
-        {visible ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
-      </button>
-    </div>
-  );
-
   return (
     <div
       className={`relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-10 ${
@@ -245,6 +249,8 @@ export default function ForgotPassword() {
               visible={showPassword}
               setVisible={setShowPassword}
               label={showPassword ? 'Hide new password' : 'Show new password'}
+              inputClass={inputClass}
+              mutedClass={mutedClass}
             />
 
             <PasswordInput
@@ -254,6 +260,8 @@ export default function ForgotPassword() {
               visible={showConfirmPassword}
               setVisible={setShowConfirmPassword}
               label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
+              inputClass={inputClass}
+              mutedClass={mutedClass}
             />
 
             <button

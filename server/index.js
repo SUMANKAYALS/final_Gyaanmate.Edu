@@ -22,7 +22,6 @@ import focusCoachRoutes from './routes/focusCoachRoutes.js';
 
 dotenv.config();
 dotenv.config({ path: new URL('./.env', import.meta.url) });
-console.log('Current working dir:', process.cwd());
 
 const app = express();
 const server = createServer(app);
@@ -85,31 +84,28 @@ app.use((err, _req, res, _next) => {
   res.status(err.status || 500).json({ message: err.message || 'Server error' });
 });
 
-// async function startServer() {
-//   initCloudinary();
-//   initializeSocket(server);
-//   server.listen(PORT, () => console.log(`Gyaanmate API running on port ${PORT}`));
-
-//   try {
-//     await connectDB();
-//   } catch (err) {
-//     console.error('DB connection failed. API is still running without database:', err.message);
-//   }
-// }
-
 async function startServer() {
-  try {
-    await connectDB();
+  initCloudinary();
+  initializeSocket(server);
 
-    initCloudinary();
-    initializeSocket(server);
+  server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      console.error(`Port ${PORT} is already in use. Stop the existing server or set a different PORT in server/.env.`);
+      process.exit(1);
+    }
 
-    server.listen(PORT, () => {
-      console.log(`Gyaanmate API running on port ${PORT}`);
-    });
-  } catch (err) {
     console.error('Failed to start server:', err);
     process.exit(1);
+  });
+
+  server.listen(PORT, () => {
+    console.log(`Gyaanmate API running on port ${PORT}`);
+  });
+
+  try {
+    await connectDB();
+  } catch (err) {
+    console.error('DB connection failed. API is still running without database:', err.message);
   }
 }
 

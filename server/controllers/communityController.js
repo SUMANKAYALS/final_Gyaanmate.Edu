@@ -346,11 +346,12 @@ export const addReaction = async (req, res) => {
 // Discussion Thread Controllers
 export const getThreads = async (req, res) => {
   try {
-    const { category, tag, course } = req.query;
+    const { category, tag, channel, course } = req.query;
     const filter = {};
     
     if (category) filter.category = category;
     if (tag) filter.tags = tag;
+    if (channel) filter.channel = channel;
     if (course) filter.course = course;
     
     const threads = await DiscussionThread.find(filter)
@@ -358,8 +359,21 @@ export const getThreads = async (req, res) => {
       .populate('course', 'title')
       .populate('acceptedAnswer', 'author content')
       .sort({ pinned: -1, createdAt: -1 });
-    
-    res.json({ threads });
+
+    const replyCounts = await Reply.aggregate([
+      { $match: { thread: { $in: threads.map((thread) => thread._id) } } },
+      { $group: { _id: '$thread', count: { $sum: 1 } } },
+    ]);
+    const replyCountByThread = new Map(
+      replyCounts.map((item) => [item._id.toString(), item.count])
+    );
+
+    res.json({
+      threads: threads.map((thread) => ({
+        ...thread.toObject(),
+        replyCount: replyCountByThread.get(thread._id.toString()) || 0,
+      })),
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -401,7 +415,14 @@ export const getThreadById = async (req, res) => {
     thread.views += 1;
     await thread.save();
     
-    res.json({ thread });
+    const replyCount = await Reply.countDocuments({ thread: thread._id });
+
+    res.json({
+      thread: {
+        ...thread.toObject(),
+        replyCount,
+      },
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
