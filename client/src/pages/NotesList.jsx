@@ -358,7 +358,7 @@ function NoteCard({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`glass-card rounded-2xl border border-slate-700/40 overflow-hidden hover:border-violet-500/30 transition h-full ${
+      className={`glass-card rounded-2xl border border-slate-700/40 overflow-hidden hover:border-violet-500/30 transition h-full min-w-0 ${
         isList ? 'flex flex-col sm:flex-row sm:items-stretch' : 'flex flex-col'
       }`}
     >
@@ -427,8 +427,8 @@ function NoteCard({
         </div>
 
         <div className="mt-auto pt-4 border-t border-slate-700/40">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-4 shrink-0">
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+            <div className="flex flex-wrap items-center gap-4 shrink-0 min-w-0">
               {isAuth ? (
                 <button
                   type="button"
@@ -461,18 +461,18 @@ function NoteCard({
                 <Bookmark size={16} fill={isBookmarked ? 'currentColor' : 'none'} />
               </button>
             </div>
-            <div className="flex flex-wrap gap-2 w-full sm:w-auto sm:justify-end">
+            <div className="flex flex-col gap-2 w-full sm:flex-row sm:flex-wrap sm:justify-end sm:w-auto">
               <button
                 type="button"
                 onClick={() => onDownload(note)}
-                className="flex-1 sm:flex-none px-3 py-2 rounded-lg border border-violet-500/40 text-violet-300 text-sm hover:bg-violet-500/10 flex items-center justify-center gap-1"
+                className="w-full sm:w-auto min-w-0 px-3 py-2 rounded-lg border border-violet-500/40 text-violet-300 text-sm hover:bg-violet-500/10 flex items-center justify-center gap-1"
               >
                 <Eye size={14} /> View
               </button>
               <button
                 type="button"
                 onClick={() => onDownload(note)}
-                className="flex-1 sm:flex-none px-4 py-2 rounded-lg bg-gradient-to-r from-violet-600 to-indigo-600 hover:opacity-90 text-white text-sm font-medium flex items-center justify-center gap-2"
+                className="w-full sm:w-auto min-w-0 px-4 py-2 rounded-lg bg-gradient-to-r from-violet-600 to-indigo-600 hover:opacity-90 text-white text-sm font-medium flex items-center justify-center gap-2"
               >
                 <Download size={16} />
                 Download
