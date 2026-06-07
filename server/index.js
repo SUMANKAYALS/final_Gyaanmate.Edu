@@ -108,6 +108,7 @@ app.use((err, _req, res, _next) => {
 //     console.error('DB connection failed. API is still running without database:', err.message);
 //   }
 // }
+// test
 
 async function startServer() {
   try {
